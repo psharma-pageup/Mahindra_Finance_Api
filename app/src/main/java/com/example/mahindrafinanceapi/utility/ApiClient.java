@@ -1,17 +1,14 @@
-package com.example.baseproject.utility;
+package com.example.mahindrafinanceapi.utility;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.baseproject.BuildConfig;
 
-import java.io.IOException;
+import com.example.mahindrafinanceapi.BuildConfig;
+
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

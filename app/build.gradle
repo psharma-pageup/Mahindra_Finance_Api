@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.baseproject'
+    namespace 'com.example.mahindrafinanceapi'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.baseproject"
+        applicationId "com.example.mahindrafinanceapi"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -44,4 +44,5 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+
 }

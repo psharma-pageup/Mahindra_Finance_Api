@@ -1,4 +1,4 @@
-package com.example.baseproject.utility;
+package com.example.mahindrafinanceapi.utility;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 

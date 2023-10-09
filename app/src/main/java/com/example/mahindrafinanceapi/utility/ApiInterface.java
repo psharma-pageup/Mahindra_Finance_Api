@@ -1,14 +1,4 @@
-package com.example.baseproject.utility;
-
-import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+package com.example.mahindrafinanceapi.utility;
 
 public interface ApiInterface {
 //    @Headers("Accept: application/json")
