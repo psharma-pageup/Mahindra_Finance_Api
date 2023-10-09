@@ -161,9 +161,15 @@ public class SplashScreen extends AppCompatActivity {
         int id = v.getId();
 
             if(id == R.id.btnGettingStarted) {
-
+                SharedPreferences sh = getSharedPreferences("Data", MODE_PRIVATE);
+                String s1 = sh.getString("sapcode", "");
+                if(s1.isEmpty()){
                 Intent intent = new Intent(this, Registration.class);
                 startActivity(intent);
+                }else{
+                    Intent intent = new Intent(this, WelcomeActivity.class);
+                    startActivity(intent);
+                }
             }
             else if(id == R.id.btnQrDetails) {
 

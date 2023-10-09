@@ -14,4 +14,14 @@
     <string name="imei_heading_one">IMEI 1 :</string>
     <string name="imei_heading_two">IMEI 2 :</string>
     <string name="submit_btn_text">Submit</string>
+    <string name="hello_msg">Hello,</string>
+    <string name="click_for_audit_task_msg">Click here to get the assigned audit tasks</string>
+    <string name="next_btn_text"><![CDATA[Next ->]]></string>
+    <string name="app_under_maintenance_msg">Application under maintenance</string>
+    <string name="exit_btn_text">Exit Application</string>
+    <string name="branch_list_title">Branch List</string>
+    <string name="please_wait_branch_list_getting_msg">Getting branch list</string>
+    <string name="retry_btn_text">Retry</string>
+    <string name="no_net_msg">Please check your net connection.</string>
+
 </resources>
