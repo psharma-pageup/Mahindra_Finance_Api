@@ -1,46 +1,76 @@
 package com.example.mahindrafinanceapi.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.mahindrafinanceapi.R;
+
 import com.example.mahindrafinanceapi.databinding.ActivityRegistrationBinding;
-import com.example.mahindrafinanceapi.databinding.ActivitySplashScreenBinding;
+import com.example.mahindrafinanceapi.models.LoginModel;
+import com.example.mahindrafinanceapi.models.RegistrationModel;
+import com.example.mahindrafinanceapi.utility.ApiClient;
+import com.example.mahindrafinanceapi.utility.ApiInterface;
+import com.example.mahindrafinanceapi.utility.UtilityMethods;
+
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class Registration extends AppCompatActivity {
 
     private ActivityRegistrationBinding activityRegistrationBinding;
     boolean isAllFieldsChecked = false;
+    ApiInterface apiInterface;
+    Context context;
+
+    public LoginModel loginModel = new LoginModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityRegistrationBinding = ActivityRegistrationBinding.inflate(getLayoutInflater());
         setContentView(activityRegistrationBinding.getRoot());
-
+        init();
        getImei();
        clickListener();
+    }
+    public void init(){
+        try {
+            context = this;
+            apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
 
 
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-            activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId());
+            activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID));
+        //   activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId());
         } else if (manager.getPhoneCount() == 2) {
-            activityRegistrationBinding.llimeitwo.setVisibility(View.VISIBLE);
-            activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId(0));
-            activityRegistrationBinding.tvImeiTwo.setText(manager.getDeviceId(1));
+//            activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId(0));
+//            activityRegistrationBinding.tvImeiTwo.setText(manager.getDeviceId(1));
+
+            activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID));
+            activityRegistrationBinding.tvImeiTwo.setText(Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID));
+
 
         }
     }
@@ -51,16 +81,9 @@ public class Registration extends AppCompatActivity {
 
                 isAllFieldsChecked = CheckAllFields();
                 if(isAllFieldsChecked){
-                    SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
-                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-
-
-                    myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
-                    myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
-                    myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
-                    myEdit.apply();
-                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-                    startActivity(intent);
+                    serviceCall();
+//                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
+//                    startActivity(intent);
                 }
 
 
@@ -73,5 +96,84 @@ public class Registration extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public void serviceCall(){
+        try {
+            if (UtilityMethods.isConnectingToInternet(context)) {
+                showProgressDialog();
+                activityRegistrationBinding.llnet.setVisibility(View.VISIBLE);
+                activityRegistrationBinding.llinternet.setVisibility(View.GONE);
+                HashMap<String, String> params = new HashMap<>();
+                params.put("sapCode", activityRegistrationBinding.etSapCode.getText().toString());
+                params.put("imeI1", activityRegistrationBinding.tvImeiOne.getText().toString());
+                params.put("imeI2", activityRegistrationBinding.tvImeiTwo.getText().toString());
+         //       params.put("LOGINTOKEN", HandleFirebaseMessagingService.getToken(context));
+                Call<RegistrationModel> call = apiInterface.Register_Service(params);
+                call.enqueue(new Callback<RegistrationModel>() {
+                    @Override
+                    public void onResponse(Call<RegistrationModel> call, retrofit2.Response<RegistrationModel> response) {
+                        RegistrationModel registerresponse = response.body();
+                        activityRegistrationBinding.pbLoading.setVisibility(View.GONE);
+                        if (registerresponse != null) {
+
+//                                    LoginModel loginModel = (LoginModel) loginResponse.data.get(0);
+//                                    Gson gson = new Gson();
+//                                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
+////                                    Intent intent = new Intent(context, VerifyActivity.class);
+//                                    intent.putExtra("LoginModel", loginModel.toString());
+//                                    startActivity(intent);
+//                                  loginModel.sapcode = activityRegistrationBinding.etSapCode.getText().toString();
+//                                    isAllFieldsChecked = CheckAllFields();
+//                                    if(isAllFieldsChecked){
+//                                        SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
+//                                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+//
+//                                        myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
+//                                        myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
+//                                        myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
+//                                        myEdit.apply();
+//                                        SharedPreferencesMethod.setAuthToken(context,loginResponse.data.access_token);
+//                                        Intent intent = new Intent(Registration.this,WelcomeActivity.class);
+//                                        startActivity(intent);
+//                                    }
+                            if(registerresponse.data == 1){
+                                SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
+                                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
+                                myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
+                                myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
+                                myEdit.apply();
+                                Toast.makeText(Registration.this, "REGISTRATION SUCCESSFULL", Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else if (registerresponse.data == 0) {
+                                Toast.makeText(Registration.this, "Employee is Inactive", Toast.LENGTH_SHORT).show();
+
+                            }
+                        } else
+                        {
+                            Toast.makeText(Registration.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<RegistrationModel> call, Throwable t) {
+
+                        Toast.makeText(Registration.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(Registration.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
+                activityRegistrationBinding.llnet.setVisibility(View.GONE);
+                activityRegistrationBinding.llinternet.setVisibility(View.VISIBLE);
+
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(Registration.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
+    }
+    private void showProgressDialog() {
+       activityRegistrationBinding.pbLoading.setVisibility(View.VISIBLE);
     }
 }

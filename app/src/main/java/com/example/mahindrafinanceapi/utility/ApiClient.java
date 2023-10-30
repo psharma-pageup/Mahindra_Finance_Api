@@ -6,17 +6,21 @@ import android.util.Log;
 
 import com.example.mahindrafinanceapi.BuildConfig;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static String BASE_URL = "http://192.168.29.250:8000/api/";
-    public static String BASE_IMAGE_URL = "http://192.168.29.250:8000/";
-    public static String BASE_PRODUCT_IMAGE_URL = BASE_IMAGE_URL + "";
+    public static String BASE_URL = "https://bams-mahindra.azurewebsites.net/";
+//    public static String BASE_IMAGE_URL = "http://192.168.29.250:8000/";
+//    public static String BASE_PRODUCT_IMAGE_URL = BASE_IMAGE_URL + "";
 
 
     private static Retrofit retrofit = null;
@@ -33,7 +37,7 @@ public class ApiClient {
 //            @Override
 //            public Response intercept(Chain chain) throws IOException {
 //                Request request = chain.request();
-//                Request updatedRequest = request.newBuilder().addHeader("lang", SharedPreferencesMethod.getDefaultLanguage(context)).addHeader("Authorization", SharedPreferencesMethod.getAuthToken(context)).addHeader("id", SharedPreferencesMethod.getUserId(context)).build();
+//                Request updatedRequest = request.newBuilder().addHeader("Authorization", SharedPreferencesMethod.getAuthToken(context)).build();
 //                Log.e("restrofit intercept",updatedRequest.toString());
 //                return chain.proceed(updatedRequest);
 //            }

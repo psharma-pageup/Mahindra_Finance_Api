@@ -23,5 +23,27 @@
     <string name="please_wait_branch_list_getting_msg">Getting branch list</string>
     <string name="retry_btn_text">Retry</string>
     <string name="no_net_msg">Please check your net connection.</string>
+    <string name="audit_progress_title">Audit in Progress</string>
+    <string name="audit_id">Audit ID</string>
+    <string name="getting_audit_id_msg">Please wait getting your Audit ID</string>
+    <string name="location">Location</string>
+    <string name="continue_btn_text">Continue</string>
+    <string name="scan_qr_code_heading">Scan Code</string>
+    <string name="conclude_btn_text">Conclude</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="gettting_details_msg">Getting details</string>
+    <string name="wrong_qr_code_scanned_msg">Please scan correct QR code.</string>
+    <string name="getting_location_msg">Getting Location...</string>
+    <string name="press_back_again_msg">Press again to exit.</string>
+    <string name="asset_list_title">Asset List</string>
+    <string name="back_btn_txt">Back</string>
+    <string name="audit_done_btn_text">Audit Done</string>
+    <string name="please_wait_asset_list_getting_msg">Getting Asset list</string>
+    <string name="confirm_title">Confirm</string>
+    <string name="audit_done_confirm_msg">Do you really want to end this AUDIT ?</string>
+    <string name="yes">Yes</string>
+    <string name="please_wait_msg">Please wait...</string>
+    <string name="server_error_msg">There is error while getting response from server</string>
+
 
 </resources>

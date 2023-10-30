@@ -8,4 +8,9 @@
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
     <color name="colorPrimary">#E41937</color>
+    <color name="scanner_line">#00ceff</color>
+    <color name="colorPrimaryDark">#e41919</color>
+    <color name="bgcolor">#3A315E</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="colorcard">#e8edea</color>
 </resources>

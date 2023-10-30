@@ -3,22 +3,29 @@ package com.example.mahindrafinanceapi.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
@@ -26,9 +33,21 @@ import android.widget.Toast;
 
 import com.example.mahindrafinanceapi.R;
 import com.example.mahindrafinanceapi.databinding.ActivitySplashScreenBinding;
-import com.example.mahindrafinanceapi.utility.Const;
+import com.example.mahindrafinanceapi.models.ImeiModel;
+import com.example.mahindrafinanceapi.models.QRResponseModel;
+import com.example.mahindrafinanceapi.models.Test;
+import com.example.mahindrafinanceapi.utility.ApiClient;
+import com.example.mahindrafinanceapi.utility.ApiInterface;
+import com.example.mahindrafinanceapi.utility.UtilityMethods;
+import com.google.gson.Gson;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+import com.marcoscg.dialogsheet.DialogSheet;
 
 import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 /**
@@ -58,7 +77,9 @@ public class SplashScreen extends AppCompatActivity {
     private SharedPreferences permissionStatus;
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
-//    HashMap<String, Object> input;
+
+
+    //    HashMap<String, Object> input;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -80,7 +101,7 @@ public class SplashScreen extends AppCompatActivity {
             }
         }
     };
-   // private View mControlsView;
+    // private View mControlsView;
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -89,7 +110,7 @@ public class SplashScreen extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-        //    mControlsView.setVisibility(View.VISIBLE);
+            //    mControlsView.setVisibility(View.VISIBLE);
         }
     };
     private boolean mVisible;
@@ -123,6 +144,13 @@ public class SplashScreen extends AppCompatActivity {
         }
     };
     private ActivitySplashScreenBinding binding;
+    private ApiInterface apiInterface;
+    Context context;
+    String imei1;
+    String imei2;
+    LocationManager locationManager;
+    String r;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +163,7 @@ public class SplashScreen extends AppCompatActivity {
         mContentView = binding.fullscreenContent;
 
         // Set up the user interaction to manually show or hide the system UI.
+
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,37 +174,215 @@ public class SplashScreen extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-     //   Const.input = new HashMap<>();
+        //   Const.input = new HashMap<>();
+        init();
+       // gps();
+
 
         setView();
 
+
     }
 
-    public void setView(){
+    private void gps() {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                Toast.makeText(context, (int)latitude, Toast.LENGTH_SHORT).show();
 
+
+            }
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+
+    }
+
+
+    public void init() {
+        try {
+            context = this;
+            apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    public void setView() {
         binding.btnGettingStarted.setOnClickListener(this::onClick);
+        binding.btnQrDetails.setOnClickListener(this::onClick);
         checkPermission();
     }
-
     public void onClick(View v) {
         int id = v.getId();
+        if (id == R.id.btnGettingStarted) {
+            getImei();
+            SendImei();
+        } else if (id == R.id.btnQrDetails) {
+            ScanCode();
+        }
+    }
+    private void ScanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume up to flash on");
+        options.setBeepEnabled(true);
+        options.setCaptureActivity(CaptureActivity.class);
+        barLauncher.launch(options);
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
+        if(result.getContents() != null)
+        {
 
-            if(id == R.id.btnGettingStarted) {
-                SharedPreferences sh = getSharedPreferences("Data", MODE_PRIVATE);
-                String s1 = sh.getString("sapcode", "");
-                if(s1.isEmpty()){
-                Intent intent = new Intent(this, Registration.class);
-                startActivity(intent);
-                }else{
-                    Intent intent = new Intent(this, WelcomeActivity.class);
-                    startActivity(intent);
-                }
+            r = result.getContents();
+            if(r.length() == 30){
+                QRServiceCall();
+            }else{
+                Toast.makeText(context, "Invalid QR Code", Toast.LENGTH_SHORT).show();
             }
-            else if(id == R.id.btnQrDetails) {
+        }
+    });
+    private void QRServiceCall() {
+        try {
+            if (UtilityMethods.isConnectingToInternet(context)) {
+//                HashMap<String, String> params = new HashMap<>();
+//                params.put("QRCode", r);
+                binding.llinternet.setVisibility(View.GONE);
+                binding.net.setVisibility(View.VISIBLE);
+
+                String params = r;
+                Call<QRResponseModel> call = apiInterface.qrdetails(params);
+                call.enqueue(new Callback<QRResponseModel>() {
+                    @Override
+                    public void onResponse(Call<QRResponseModel> call, retrofit2.Response<QRResponseModel> response) {
+                        QRResponseModel qrResponseModel = response.body();
+                        if (qrResponseModel != null) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+                            builder.setTitle("Customer Information");
+                            builder.setMessage(qrResponseModel.data.customerInfo);
+                            builder.show();
+                        } else
+                        {
+                            Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<QRResponseModel> call, Throwable t) {
+
+                        Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(SplashScreen.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
+                binding.llinternet.setVisibility(View.VISIBLE);
+                binding.net.setVisibility(View.GONE);
 
             }
+        }
+        catch (Exception e) {
+            Toast.makeText(SplashScreen.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        }
 
     }
+ public void getImei(){
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if(manager.getPhoneCount() == 1){
+         //   imei1 = manager.getDeviceId();
+           imei1 =  Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        } else if (manager.getPhoneCount() == 2) {
+         //   imei1 = manager.getDeviceId(0);
+           // imei2 = manager.getDeviceId(1);
+            imei1 =  Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            imei2 =  Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        }
+    }
+    public void SendImei(){
+    serviceCall();
+    }
+    public void serviceCall(){
+        try {
+            if (UtilityMethods.isConnectingToInternet(context)) {
+                binding.pbLoading.setVisibility(View.VISIBLE);
+                binding.llinternet.setVisibility(View.GONE);
+                binding.net.setVisibility(View.VISIBLE);
+                HashMap<String, String> params = new HashMap<>();
+                params.put("imeI1", imei1);
+                params.put("imeI2", imei2);
+                Call<ImeiModel> call = apiInterface.imeisend(params);
+                call.enqueue(new Callback<ImeiModel>() {
+                    @Override
+                    public void onResponse(Call<ImeiModel> call, retrofit2.Response<ImeiModel> response) {
+                        ImeiModel imeiresponse = response.body();
+                        binding.pbLoading.setVisibility(View.GONE);
+
+                        if (imeiresponse != null) {
+
+                            if((imeiresponse.data == 0) || (imeiresponse.data == 4) || (imeiresponse.data == 5)){
+                                Intent intent = new Intent(SplashScreen.this,MessageActivity.class);
+                                intent.putExtra("imeiresponse",imeiresponse);
+                                startActivity(intent);
+                            } else if (imeiresponse.data == 2) {
+                                Intent intent = new Intent(SplashScreen.this, Registration.class);
+                                startActivity(intent);
+                            } else if (imeiresponse.data == 3) {
+                                Intent intent = new Intent(SplashScreen.this,WelcomeActivity.class);
+                                startActivity(intent);
+                            }
+                        } else
+                        {
+                            Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ImeiModel> call, Throwable t) {
+
+                        Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(SplashScreen.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
+                binding.llinternet.setVisibility(View.VISIBLE);
+                binding.net.setVisibility(View.GONE);
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(SplashScreen.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
 
 private void checkPermission() {
 
@@ -330,4 +537,5 @@ private void checkPermission() {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
 }

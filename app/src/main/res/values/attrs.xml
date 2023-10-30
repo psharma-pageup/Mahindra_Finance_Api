@@ -3,4 +3,15 @@
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />
     </declare-styleable>
+    <declare-styleable name="ScannerOverlay">
+        <attr name="square_width" format="integer" />
+        <attr name="square_height" format="integer" />
+        <attr name="line_color" format="color" />
+        <attr name="line_width" format="integer" />
+        <attr name="line_speed" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="BarcodeReader">
+        <attr name="auto_focus" format="boolean" />
+        <attr name="use_flash" format="boolean" />
+    </declare-styleable>
 </resources>
