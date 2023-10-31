@@ -10,7 +10,7 @@
     android:gravity="bottom|center_horizontal"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context="com.example.mahindrafinanceapi.activities.SplashScreen">
+    tools:context="com.example.mahindrafinanceapi.com.app.mahindrafinanceapi.activities.SplashScreen">
 <LinearLayout
     android:id="@+id/net"
     android:layout_width="match_parent"

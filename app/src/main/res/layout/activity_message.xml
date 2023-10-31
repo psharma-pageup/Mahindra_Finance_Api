@@ -10,7 +10,7 @@
     android:gravity="bottom|center_horizontal"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context=".activities.MessageActivity">
+    tools:context="com.app.mahindrafinancemfact.activities.MessageActivity">
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"

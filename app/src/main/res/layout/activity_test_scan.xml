@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/bg"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
     <com.journeyapps.barcodescanner.DecoratedBarcodeView
@@ -22,28 +22,58 @@
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:orientation="vertical">
-
+        <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
         <Button
             android:id="@+id/btscan"
             android:layout_width="200dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="50dp"
             android:onClick="scan"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:backgroundTint="@color/colorPrimary"
+           android:background="@drawable/rounded_button"
             android:text="Scan" />
+        <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerInParent="true"
+        android:elevation="10dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@android:color/white"
+        android:indeterminateTintMode="src_atop"
+        android:visibility="gone" />
+        </RelativeLayout>
+        <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
 
         <Button
             android:layout_marginBottom="10dp"
             android:layout_width="200dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="50dp"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:backgroundTint="@color/colorPrimary"
+           android:background="@drawable/rounded_button"
             android:onClick="conclude"
             android:text="Conclude" />
+        <ProgressBar
+            android:id="@+id/pbLoading2"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:elevation="10dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@android:color/white"
+            android:indeterminateTintMode="src_atop"
+            android:visibility="gone" />
+        >
+        </RelativeLayout>
     </LinearLayout>
 
     <View
@@ -60,6 +90,30 @@
 <!--        android:layout_alignParentRight="true"-->
 <!--        android:layout_alignTop="@id/buttonsLayout"-->
 <!--        android:id="@+id/barcodePreview" />-->
+
+    <LinearLayout
+        android:id="@+id/llinternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/nointernet" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Internet Connection "
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
 </RelativeLayout>
 

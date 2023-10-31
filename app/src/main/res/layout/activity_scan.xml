@@ -8,7 +8,7 @@
     android:animateLayoutChanges="true"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.ScanActivity">
+    tools:context="com.app.mahindrafinancemfact.activities.ScanActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -36,7 +36,7 @@
                 android:textSize="32sp" />
         </LinearLayout>
 
-        <com.example.mahindrafinanceapi.View.SquareRelativeLayout
+        <com.app.mahindrafinancemfact.View.SquareRelativeLayout
             android:id="@+id/rlContainer"
             android:layout_width="match_parent"
             android:layout_height="400dp"
@@ -45,14 +45,14 @@
             <!-- Barcode Reader fragment -->
             <fragment
                 android:id="@+id/barcode_fragment"
-                android:name="com.example.mahindrafinanceapi.Barcode.Barcode.BarcodeReader"
+                android:name="com.app.mahindrafinancemfact.Barcode.Barcode.BarcodeReader"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 app:auto_focus="true"
                 app:use_flash="false" />
 
             <!-- Scanner overlay animation -->
-            <com.example.mahindrafinanceapi.Barcode.Barcode.ScannerOverlay
+            <com.app.mahindrafinancemfact.Barcode.Barcode.ScannerOverlay
                 android:id="@+id/soView"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
@@ -64,7 +64,7 @@
                 app:square_width="200" />
 
 
-        </com.example.mahindrafinanceapi.View.SquareRelativeLayout>
+        </com.app.mahindrafinancemfact.View.SquareRelativeLayout>
 
 
         <LinearLayout

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.mahindrafinanceapi'
+    namespace 'com.app.mahindrafinancemfact'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.mahindrafinanceapi"
+        applicationId "com.app.mahindrafinancemfact"
         minSdk 24
         targetSdk 33
         versionCode 1

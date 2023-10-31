@@ -6,62 +6,190 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/bg"
+    android:background="@color/white"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context=".activities.AssetListScreenActivity">
+    tools:context="com.app.mahindrafinancemfact.activities.AssetListScreenActivity">
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         android:orientation="vertical">
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="28sp"
-            android:padding="20dp"
-            android:textColor="@android:color/white"
-            android:text="@string/asset_list_title"/>
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/white"></LinearLayout>
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbar"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:text="@string/asset_list_title"/>
 
+        </androidx.appcompat.widget.Toolbar>
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="5dp"
-            android:textColor="@android:color/white"
-            android:text="@string/audit_id"/>
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:text="Audit ID:"/>
 
         <TextView
             android:id="@+id/tvAuditId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:paddingLeft="20dp"
+            android:textSize="15sp"
             android:text="fmldkfms"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal">
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@android:color/black"
+                    android:text="Total :"/>
+
+                <TextView
+                    android:id="@+id/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                   android:padding="5dp"
+                    android:text="0"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp"
+            android:layout_margin="5dp"
+            app:cardElevation="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@android:color/black"
+                    android:text="Completed:"/>
+
+                <TextView
+                    android:id="@+id/completed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:padding="5dp"
+                    android:text="0"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:paddingLeft="10dp"
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="@android:color/black"
+                    android:text="Pending:"/>
+
+                <TextView
+                    android:id="@+id/pending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:padding="5dp"
+                    android:text="0"
+                    android:textColor="@android:color/black"/>
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_marginTop="10dp"
-            android:background="@android:color/white"
+            android:background="@android:color/black"
             android:elevation="5dp"></LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAssetList"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:overScrollMode="ifContentScrolls"
             android:layout_weight="1">
 
@@ -84,15 +212,16 @@
                 android:layout_width="0dp"
                 android:layout_weight="0.45"
                 android:layout_height="wrap_content">
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnBack"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:textAllCaps="false"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
                     android:layout_centerInParent="true"
+                    android:background="@drawable/rounded_button"
                     android:text="@string/back_btn_txt"
-                    android:textColor="@android:color/white"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white" />
 
             </RelativeLayout>
             <LinearLayout
@@ -105,13 +234,13 @@
                 android:layout_height="wrap_content">
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnAuditDone"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
                     android:textAllCaps="false"
                     android:layout_centerInParent="true"
                     android:text="@string/audit_done_btn_text"
                     android:textColor="@android:color/white"
-                    android:backgroundTint="@color/colorPrimary"/>
+                    android:background="@drawable/rounded_button"/>
                 <ProgressBar
                     android:id="@+id/pbAuditDoneLoading"
                     android:layout_width="24dp"
@@ -128,63 +257,87 @@
         </LinearLayout>
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/load"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:animateLayoutChanges="true"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:elevation="10dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@android:color/black"
+            android:indeterminateTintMode="src_atop" />
+
+        <TextView
+            android:id="@+id/tvPleaseWait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="15dp"
+            android:text="Getting Asset List"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRetry"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/rounded_button"
+                android:text="@string/retry_btn_text"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center"-->
-<!--        android:weightSum="1"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:animateLayoutChanges="true"-->
-<!--        android:orientation="vertical">-->
-
-<!--        <ProgressBar-->
-<!--            android:id="@+id/pbLoading"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:elevation="10dp"-->
-<!--            android:indeterminate="true"-->
-<!--            android:indeterminateTint="@android:color/white"-->
-<!--            android:indeterminateTintMode="src_atop"/>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tvPleaseWait"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textSize="18sp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:gravity="center"-->
-<!--            android:padding="15dp"-->
-<!--            android:textColor="@android:color/white"-->
-<!--            android:text="@string/please_wait_asset_list_getting_msg"/>-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center"-->
-<!--            android:weightSum="1">-->
-
-<!--            <androidx.appcompat.widget.AppCompatButton-->
-<!--                android:id="@+id/btnRetry"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_weight="0.5"-->
-<!--                android:visibility="gone"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                android:textAllCaps="false"-->
-<!--                android:layout_centerInParent="true"-->
-<!--                android:text="@string/retry_btn_text"-->
-<!--                android:textColor="@android:color/white"-->
-<!--                android:backgroundTint="@color/colorPrimary"/>-->
-
-<!--        </LinearLayout>-->
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llinternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/nointernet" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Internet Connection "
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
 
-
-<!--    </LinearLayout>-->
 
 
 </RelativeLayout>

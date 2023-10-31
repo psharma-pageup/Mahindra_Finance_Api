@@ -6,10 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/bg"
+    android:background="@color/white"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context=".activities.BranchListActivity">
+    tools:context="com.app.mahindrafinancemfact.activities.BranchListActivity">
+
+
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
@@ -17,22 +19,21 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="28sp"
-            android:padding="20dp"
-
-            android:textColor="@android:color/white"
-            android:text="@string/branch_list_title"/>
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/toolbar"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:text="@string/branch_list_title"/>
 
-            android:background="@android:color/white"></LinearLayout>
-
+        </androidx.appcompat.widget.Toolbar>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBranchList"
             android:layout_width="match_parent"
@@ -44,9 +45,8 @@
         </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
-
-
     <LinearLayout
+        android:id="@+id/load"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -64,7 +64,7 @@
             android:layout_centerInParent="true"
             android:elevation="10dp"
             android:indeterminate="true"
-            android:indeterminateTint="@android:color/white"
+            android:indeterminateTint="@android:color/black"
             android:indeterminateTintMode="src_atop" />
 
         <TextView
@@ -75,7 +75,7 @@
             android:gravity="center"
             android:padding="15dp"
             android:text="@string/please_wait_branch_list_getting_msg"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -87,11 +87,11 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRetry"
-                android:layout_width="0dp"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_centerInParent="true"
-                android:layout_weight="0.7"
-                android:backgroundTint="@color/colorPrimary"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/rounded_button"
                 android:text="@string/retry_btn_text"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
@@ -101,7 +101,6 @@
 
 
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/NoAuditTask"
         android:layout_width="wrap_content"
@@ -122,19 +121,48 @@
             android:gravity="center"
             android:padding="20dp"
             android:text="NO AUDIT TASKS FOUND"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="30sp" />
 
-        <Button
-            android:id="@+id/exit"
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Exit Application"
-            android:textColor="@android:color/white"
 
-            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/exit"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/rounded_button"
+            android:text="Exit Application"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:visibility="visible" />
 
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llinternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/nointernet" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Internet Connection "
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
+
 </RelativeLayout>

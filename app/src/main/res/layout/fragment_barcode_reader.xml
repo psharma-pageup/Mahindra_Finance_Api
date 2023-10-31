@@ -7,17 +7,17 @@
     android:background="#00ff00"
     android:orientation="vertical">
 
-    <com.example.mahindrafinanceapi.Barcode.Barcode.camera.CameraSourcePreview
+    <com.app.mahindrafinancemfact.Barcode.Barcode.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.example.mahindrafinanceapi.Barcode.Barcode.camera.GraphicOverlay
+        <com.app.mahindrafinancemfact.Barcode.Barcode.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
 
-    </com.example.mahindrafinanceapi.Barcode.Barcode.camera.CameraSourcePreview>
+    </com.app.mahindrafinancemfact.Barcode.Barcode.camera.CameraSourcePreview>
 
 </LinearLayout>
