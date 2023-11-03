@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.app.mahindrafinancemfact.models.ImeiModel;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
 import com.marcoscg.dialogsheet.DialogSheet;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -25,7 +27,7 @@ import retrofit2.Callback;
 public class MessageActivity extends AppCompatActivity {
 
     private ActivityMessageBinding activityMessageBinding;
-    String imeiresponse;
+    Serializable imeiresponse;
     ApiInterface apiInterface;
     Context context;
     String imei1;
@@ -36,9 +38,8 @@ public class MessageActivity extends AppCompatActivity {
         activityMessageBinding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(activityMessageBinding.getRoot());
         init();
-        imeiresponse = getIntent().getStringExtra("imeiresponse");
+        imeiresponse = getIntent().getSerializableExtra("imeiresponse");
         setMessage();
-
 
     }
     public void init(){
@@ -54,52 +55,50 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     public void setMessage(){
-        if(imeiresponse.equals(4)){
-            activityMessageBinding.tvMessage.setText("Your Account Has Been locked, Kindly Resend Registration Request");
-            activityMessageBinding.btnMessage.setText("Resend Request");
-            activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-              getImei();
-                }
-            });
-        } else if (imeiresponse.equals(0)) {
-            activityMessageBinding.tvMessage.setText("Application Under Maintainence");
-            activityMessageBinding.btnMessage.setText("Exit Application");
-            activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finishAffinity();
-                }
-            });
+        if(imeiresponse != null) {
+            if (imeiresponse.equals(4)) {
+                activityMessageBinding.tvMessage.setText("Your Account Has Been locked, Kindly Resend Registration Request");
+                activityMessageBinding.btnMessage.setText("Resend Request");
+                activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getImei();
+                    }
+                });
+            } else if (imeiresponse.equals(0)) {
+                activityMessageBinding.tvMessage.setText("Application Under Maintainence");
+                activityMessageBinding.btnMessage.setText("Exit Application");
+                activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finishAffinity();
+                    }
+                });
 
-        } else if (imeiresponse.equals(5)) {
-            activityMessageBinding.tvMessage.setText("Account has been locked due to inactive employee");
-            activityMessageBinding.btnMessage.setText("Exit Application");
-            activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finishAffinity();
-                }
-            });
+            } else if (imeiresponse.equals(5)) {
+                activityMessageBinding.tvMessage.setText("Account has been locked due to inactive employee");
+                activityMessageBinding.btnMessage.setText("Exit Application");
+                activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finishAffinity();
+                    }
+                });
+            }
+        }else{
+            Toast.makeText(context, "imresponse is null", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void ServiceCall() {
 
-
-    }
     public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-            // activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId());
             imei1 = manager.getDeviceId();
             SendImei();
 
         } else if (manager.getPhoneCount() == 2) {
-//            activityRegistrationBinding.llimeitwo.setVisibility(View.VISIBLE);
-//            activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId(0));
-//            activityRegistrationBinding.tvImeiTwo.setText(manager.getDeviceId(1));
+
             imei1 = manager.getDeviceId(0);
             imei2 = manager.getDeviceId(1);
             SendImei();
@@ -113,39 +112,20 @@ public class MessageActivity extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imeI1", imei1);
                 params.put("imeI2", imei2);
-                Call<ImeiModel> call = apiInterface.Resend_request(params);
+                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = tok.getString("token", "");
+                Call<ImeiModel> call = apiInterface.Resend_request(params,"Bearer " + token);
                 call.enqueue(new Callback<ImeiModel>() {
                     @Override
                     public void onResponse(Call<ImeiModel> call, retrofit2.Response<ImeiModel> response) {
                         ImeiModel imeiresponse = response.body();
                         if (imeiresponse != null) {
 
-//                                    LoginModel loginModel = (LoginModel) loginResponse.data.get(0);
-//                                    Gson gson = new Gson();
-//                                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-////                                    Intent intent = new Intent(context, VerifyActivity.class);
-//                                    intent.putExtra("LoginModel", loginModel.toString());
-//                                    startActivity(intent);
-//                            loginModel.sapcode = activityRegistrationBinding.etSapCode.getText().toString();
-//                            isAllFieldsChecked = CheckAllFields();
-//                            if(isAllFieldsChecked){
-//                                SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
-//                                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-//
-//
-//                                myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
-//                                myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
-//                                myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
-//                                myEdit.apply();
-//                                SharedPreferencesMethod.setAuthToken(context,loginResponse.data.access_token);
-//                                Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-//                                startActivity(intent);
-//                            }
 
-                            if(imeiresponse.data == 1){
+                            if(imeiresponse.data.data == 1){
                                 Toast.makeText(MessageActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
                                 finishAffinity();
-                            } else if (imeiresponse.data == 0) {
+                            } else if (imeiresponse.data.data == 0) {
                                 new DialogSheet(MessageActivity.this,true)
                                         .setTitle("Registration Failed")
                                         .setColoredNavigationBar(true)

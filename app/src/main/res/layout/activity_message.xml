@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/bg"
+    android:background="@color/white"
     android:gravity="bottom|center_horizontal"
     android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.app.mahindrafinancemfact.activities.MessageActivity">
+
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
         android:padding="16dp"
         android:orientation="vertical"
         android:layout_weight="0.6">
+
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
@@ -26,7 +28,7 @@
             android:textSize="34sp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:text="@string/app_under_maintenance_msg"/>
 
     </LinearLayout>

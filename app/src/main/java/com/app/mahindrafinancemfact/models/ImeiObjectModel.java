@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class ImeiModel implements Serializable {
-
-
+public class ImeiObjectModel implements Serializable {
     @SerializedName("data")
-    public ImeiObjectModel data = new ImeiObjectModel();
+    public int data;
+
+    @SerializedName("token")
+    public String token;
 }

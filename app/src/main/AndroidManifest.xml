@@ -25,9 +25,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/mfact"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/mfact_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">
@@ -36,15 +36,8 @@
 
             android:exported="false" />
         <activity
-            android:name="com.app.mahindrafinancemfact.activities.TestQRActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"></activity>
-        <activity
             android:name="com.app.mahindrafinancemfact.activities.AssetListScreenActivity"
             android:theme="@style/Theme.BaseProject.Fullscreen"
-            android:exported="false" />
-        <activity
-            android:name="com.app.mahindrafinancemfact.activities.ScanActivity"
             android:exported="false" />
         <activity
             android:name="com.app.mahindrafinancemfact.activities.AuditDetailsScreenActivity"
@@ -56,6 +49,7 @@
             android:exported="false" />
         <activity
             android:name="com.app.mahindrafinancemfact.activities.MessageActivity"
+            android:theme="@style/Theme.BaseProject.Fullscreen"
             android:exported="false" />
         <activity
             android:name="com.app.mahindrafinancemfact.activities.WelcomeActivity"

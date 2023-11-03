@@ -1,24 +1,23 @@
 package com.app.mahindrafinancemfact.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.app.mahindrafinancemfact.R;
-import com.app.mahindrafinancemfact.View.CircularTextView;
 import com.app.mahindrafinancemfact.databinding.ActivityWelcomeBinding;
 import com.app.mahindrafinancemfact.models.ProfileObjectModel;
 import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
 import com.app.mahindrafinancemfact.utility.UtilityMethods;
-
 
 import java.util.HashMap;
 
@@ -31,7 +30,6 @@ public class WelcomeActivity extends AppCompatActivity {
     Context context;
     String imei1;
     String imei2;
-    Boolean isbranchlistthere;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +38,8 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(activityWelcomeBinding.getRoot());
         context = this;
 
-        CircularTextView circularTextView = findViewById(R.id.circulartextview);
-        circularTextView.setText("A");
-
         init();
+        setToolbar();
         getImei();
         getProfile();
         clickListener();
@@ -51,6 +47,23 @@ public class WelcomeActivity extends AppCompatActivity {
     }
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
+    }
+
+    private void setToolbar() {
+        setSupportActionBar(activityWelcomeBinding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activityWelcomeBinding.toolbar.setNavigationIcon(R.drawable.back_button);
+
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void clickListener(){
@@ -69,13 +82,10 @@ public class WelcomeActivity extends AppCompatActivity {
     public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-         //   imei1 = manager.getDeviceId();
            imei1= Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
         } else if (manager.getPhoneCount() == 2) {
-//            imei1 = manager.getDeviceId(0);
-//            imei2 = manager.getDeviceId(1);
 
             imei1= Settings.Secure.getString(
                     context.getContentResolver(),
@@ -90,15 +100,18 @@ public class WelcomeActivity extends AppCompatActivity {
         {
             if (UtilityMethods.isConnectingToInternet(context)) {
                 activityWelcomeBinding.llProfile.setVisibility(View.VISIBLE);
-              //  activityWelcomeBinding.card.setVisibility(View.VISIBLE);
+                activityWelcomeBinding.card.setVisibility(View.VISIBLE);
                 activityWelcomeBinding.llinternet.setVisibility(View.GONE);
 
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imeI1", imei1);
                 params.put("imeI2", imei2);
 
+                SharedPreferences sh = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = sh.getString("token", "");
 
-                Call<ProfileObjectModel> call = apiInterface.getProfile(params);
+
+                Call<ProfileObjectModel> call = apiInterface.getProfile(params,"Bearer " + token);
                 call.enqueue(new Callback<ProfileObjectModel>(){
                     @Override
                     public void onResponse(Call<ProfileObjectModel> call, retrofit2.Response<ProfileObjectModel>response) {
@@ -107,7 +120,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         if (profileObjectModel != null) {
 
 
-                                    activityWelcomeBinding.Name.setText(profileObjectModel.data.name);
+                                    activityWelcomeBinding.Name.setText(profileObjectModel.data.name.toLowerCase());
                                     String empCode = profileObjectModel.data.empCode;
                                     SharedPreferences sharedPreferences = getSharedPreferences("SAPCODE", MODE_PRIVATE);
                                     SharedPreferences.Editor myEdit = sharedPreferences.edit();
@@ -130,7 +143,7 @@ public class WelcomeActivity extends AppCompatActivity {
             } else {
 
                 activityWelcomeBinding.llProfile.setVisibility(View.GONE);
-            //    activityWelcomeBinding.card.setVisibility(View.GONE);
+                activityWelcomeBinding.card.setVisibility(View.GONE);
                 activityWelcomeBinding.llinternet.setVisibility(View.VISIBLE);
 
                 Toast.makeText(WelcomeActivity.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();

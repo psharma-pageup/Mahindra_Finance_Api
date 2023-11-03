@@ -10,11 +10,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -24,6 +27,7 @@ import android.widget.Toast;
 
 import com.app.mahindrafinancemfact.R;
 import com.app.mahindrafinancemfact.models.ImeiModel;
+import com.app.mahindrafinancemfact.models.ImeiObjectModel;
 import com.app.mahindrafinancemfact.models.QRResponseModel;
 import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
@@ -43,6 +47,7 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,6 +64,9 @@ public class TestScanActivity extends CaptureActivity {
     FusedLocationProviderClient mFusedLocationClient;
     String latitude;
     String longitude;
+
+    Bitmap image;
+    String base64Image;
     Context context;
     String Atag;
     String s1;
@@ -79,7 +87,6 @@ public class TestScanActivity extends CaptureActivity {
         @Override
         public void barcodeResult(BarcodeResult result) {
             if(result.getText() == null || result.getText().equals(lastText)) {
-                // Prevent duplicate scans
                 return;
             }
 
@@ -88,9 +95,13 @@ public class TestScanActivity extends CaptureActivity {
 
             beepManager.playBeepSoundAndVibrate();
 
-            //Added preview of scanned barcode
-//            ImageView imageView = findViewById(R.id.barcodePreview);
-//            imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+
+
+            image = result.getBitmapWithResultPoints(Color.YELLOW);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
         }
 
         @Override
@@ -144,8 +155,7 @@ public class TestScanActivity extends CaptureActivity {
                         if (location == null) {
                             requestNewLocationData();
                         } else {
-//                            latitudeTextView.setText(location.getLatitude() + "");
-//                            longitTextView.setText(location.getLongitude() + "");
+
                             latitude = String.valueOf(location.getLatitude());
                             longitude = String.valueOf(location.getLongitude());
                         }
@@ -175,8 +185,7 @@ public class TestScanActivity extends CaptureActivity {
 
             }
         } else {
-            // if permissions aren't available,
-            // request for permissions
+
             requestPermissions();
         }
     }
@@ -184,16 +193,14 @@ public class TestScanActivity extends CaptureActivity {
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
 
-        // Initializing LocationRequest
-        // object with appropriate methods
+
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(5);
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
 
-        // setting LocationRequest
-        // on FusedLocationClient
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
@@ -203,38 +210,30 @@ public class TestScanActivity extends CaptureActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
-//            latitudeTextView.setText("Latitude: " + mLastLocation.getLatitude() + "");
-//            longitTextView.setText("Longitude: " + mLastLocation.getLongitude() + "");
+
             latitude = String.valueOf(mLastLocation.getLatitude());
             longitude = String.valueOf(mLastLocation.getLongitude());
         }
     };
 
-    // method to check for permissions
+
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED;
 
-        // If we want background location
-        // on Android 10.0 and higher,
-        // use:
-        // ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
-    // method to request for permissions
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 "android.permission.ACCESS_COARSE_LOCATION",
                 "android.permission.ACCESS_FINE_LOCATION"},REQUEST_LOCATION);
     }
 
-    // method to check
-    // if location is enabled
+
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    // If everything is alright then
     @Override
     public void
     onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -265,20 +264,18 @@ public class TestScanActivity extends CaptureActivity {
     }
 
     public void conclude(View view) {
-//        barcodeView.pause();
 
         Intent intent = new Intent(TestScanActivity.this,AssetListScreenActivity.class);
         startActivity(intent);
     }
 
     public void scan(View view) {
-//        barcodeView.resume();
 
         if(lastText != null) {
 
             if (lastText.length() == 30) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Choose an animal");
+                builder.setTitle("Choose a condition");
 
                 String[] status = {"Working Condition", "Not in use", "Scrap", "Not in Working Condition"};
                 builder.setItems(status, new DialogInterface.OnClickListener() {
@@ -344,7 +341,9 @@ public class TestScanActivity extends CaptureActivity {
                 llinternet.setVisibility(View.GONE);
                 pbloading.setVisibility(View.VISIBLE);
                 String params = lastText;
-                Call<QRResponseModel> call = apiInterface.qrdetails(params);
+                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = tok.getString("token", "");
+                Call<QRResponseModel> call = apiInterface.qrdetails(params,"Bearer " + token);
                 call.enqueue(new Callback<QRResponseModel>() {
                     @Override
                     public void onResponse(Call<QRResponseModel> call, retrofit2.Response<QRResponseModel> response) {
@@ -403,12 +402,17 @@ public class TestScanActivity extends CaptureActivity {
                 params.put("Longitude",longitude);
                 params.put("Latitude",latitude);
                 params.put("Atag",Atag);
+                params.put("base64",base64Image);
 
-                Call<ImeiModel> call = apiInterface.Final_request(params);
-                call.enqueue(new Callback<ImeiModel>() {
+
+                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = tok.getString("token", "");
+
+                Call<ImeiObjectModel> call = apiInterface.Final_request(params,"Bearer "+token);
+                call.enqueue(new Callback<ImeiObjectModel>() {
                     @Override
-                    public void onResponse(Call<ImeiModel> call, retrofit2.Response<ImeiModel> response) {
-                        ImeiModel imeiresponse = response.body();
+                    public void onResponse(Call<ImeiObjectModel> call, retrofit2.Response<ImeiObjectModel> response) {
+                        ImeiObjectModel imeiresponse = response.body();
                         pbloading.setVisibility(View.GONE);
 
                         if (imeiresponse != null) {
@@ -425,7 +429,7 @@ public class TestScanActivity extends CaptureActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<ImeiModel> call, Throwable t) {
+                    public void onFailure(Call<ImeiObjectModel> call, Throwable t) {
 
                         Toast.makeText(TestScanActivity.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
                     }
@@ -443,9 +447,6 @@ public class TestScanActivity extends CaptureActivity {
         }
     }
 
-    public void triggerScan(View view) {
-        barcodeView.decodeSingle(callback);
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

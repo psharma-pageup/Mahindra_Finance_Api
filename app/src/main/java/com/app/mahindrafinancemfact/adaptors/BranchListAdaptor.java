@@ -25,7 +25,6 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
     List<BranchModel> branchList = new ArrayList<>();
     Context context;
 
-    public boolean menu = true;
     private RecyclerView.ViewHolder holder;
     public int position;
     String aid;
@@ -39,18 +38,11 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
      }
 
 
-    public void BranchListAdapter (Activity activity, List <BranchModel> branchList) {
-        this.branchList = branchList;
 
-    }
     @NonNull
     @Override
     public BranchListAdaptor.branchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view ;
-//        view = LayoutInflater.from (parent.getContext ())
-//                .inflate (R.layout.branch_list_item, parent, false);
-//        branchViewHolder professionViewHolder = new branchViewHolder (view);
-//        return professionViewHolder;
+
         branchListItemBinding = BranchListItemBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
 
         return new BranchListAdaptor.branchViewHolder(branchListItemBinding);
@@ -61,7 +53,6 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
         this.holder = holder;
         this.position = position;
         BranchModel branchModel = branchList.get(position);
-   //     holder.tvBranchName.setText (branchModel.getBranch_name ());
 
         holder.branchListItemBinding.tvBranchName.setText(branchList.get(position).branch);
 

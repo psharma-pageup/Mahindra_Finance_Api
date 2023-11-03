@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@color/white"
+    android:gravity="center"
+
     android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.app.mahindrafinancemfact.activities.BranchListActivity">
@@ -16,6 +18,7 @@
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
         android:visibility="visible"
+        android:gravity="center"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -37,10 +40,10 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBranchList"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:visibility="visible"
             android:overScrollMode="never"
-            android:layout_weight="1">
+           >
 
         </androidx.recyclerview.widget.RecyclerView>
 

@@ -77,12 +77,10 @@ public class SplashScreen extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_SETTING = 102;
 
 
-    //    HashMap<String, Object> input;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
         public void run() {
-            // Delayed removal of status and navigation bar
             if (Build.VERSION.SDK_INT >= 30) {
                 mContentView.getWindowInsetsController().hide(
                         WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
@@ -108,7 +106,6 @@ public class SplashScreen extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-            //    mControlsView.setVisibility(View.VISIBLE);
         }
     };
     private boolean mVisible;
@@ -163,7 +160,6 @@ public class SplashScreen extends AppCompatActivity {
         mVisible = true;
         mContentView = binding.fullscreenContent;
 
-        // Set up the user interaction to manually show or hide the system UI.
 
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,54 +168,14 @@ public class SplashScreen extends AppCompatActivity {
             }
         });
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        //   Const.input = new HashMap<>();
+
         init();
-       // gps();
 
 
         setView();
 
 
     }
-
-    private void gps() {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-                Toast.makeText(context, (int)latitude, Toast.LENGTH_SHORT).show();
-
-
-            }
-            @Override
-            public void onProviderEnabled(@NonNull String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(@NonNull String provider) {
-
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-
-    }
-
 
     public void init() {
         try {
@@ -230,10 +186,6 @@ public class SplashScreen extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-
-
 
     public void setView() {
         binding.btnGettingStarted.setOnClickListener(this::onClick);
@@ -295,13 +247,14 @@ public class SplashScreen extends AppCompatActivity {
     private void QRServiceCall() {
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
-//                HashMap<String, String> params = new HashMap<>();
-//                params.put("QRCode", r);
+
                 binding.llinternet.setVisibility(View.GONE);
                 binding.net.setVisibility(View.VISIBLE);
+                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = tok.getString("token", "");
 
                 String params = r;
-                Call<QRResponseModel> call = apiInterface.qrdetails(params);
+                Call<QRResponseModel> call = apiInterface.qrdetails(params,"Bearer " + token);
                 call.enqueue(new Callback<QRResponseModel>() {
                     @Override
                     public void onResponse(Call<QRResponseModel> call, retrofit2.Response<QRResponseModel> response) {
@@ -338,13 +291,12 @@ public class SplashScreen extends AppCompatActivity {
  public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-         //   imei1 = manager.getDeviceId();
+
            imei1 =  Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
         } else if (manager.getPhoneCount() == 2) {
-         //   imei1 = manager.getDeviceId(0);
-           // imei2 = manager.getDeviceId(1);
+
             imei1 =  Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
@@ -374,14 +326,19 @@ public class SplashScreen extends AppCompatActivity {
 
                         if (imeiresponse != null) {
 
-                            if((imeiresponse.data == 0) || (imeiresponse.data == 4) || (imeiresponse.data == 5)){
+                            if((imeiresponse.data.data == 0) || (imeiresponse.data.data == 4) || (imeiresponse.data.data == 5)){
                                 Intent intent = new Intent(SplashScreen.this,MessageActivity.class);
-                                intent.putExtra("imeiresponse",imeiresponse);
+                                intent.putExtra("imeiresponse",imeiresponse.data.data);
                                 startActivity(intent);
-                            } else if (imeiresponse.data == 2) {
+                            } else if (imeiresponse.data.data == 2) {
                                 Intent intent = new Intent(SplashScreen.this, Registration.class);
                                 startActivity(intent);
-                            } else if (imeiresponse.data == 3) {
+                            } else if (imeiresponse.data.data == 3) {
+                                String token = imeiresponse.data.token;
+                                SharedPreferences sharedPreferences = getSharedPreferences("Token", MODE_PRIVATE);
+                                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                myEdit.putString("token", token);
+                                myEdit.apply();
                                 Intent intent = new Intent(SplashScreen.this,WelcomeActivity.class);
                                 startActivity(intent);
                             }
@@ -425,7 +382,6 @@ private void checkPermission() {
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                //Show Information about why you need the permission
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.grant_permission));
                 builder.setMessage(getString(R.string.permission_camera));
@@ -485,7 +441,6 @@ private void checkPermission() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         permissionStatus = getSharedPreferences("permissionStatus", this.MODE_PRIVATE);
         if (requestCode == PERMISSION_CALLBACK_CONSTANT) {
-            //check if all permissions are granted
             boolean allgranted = false;
             for (int i = 0; i < grantResults.length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
@@ -496,13 +451,7 @@ private void checkPermission() {
                 }
             }
 
-//            if (allgranted || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-////                input = Utility.getIMEI(SplashscreenActivity.this);
-////                if (btnClicked) {
-////                    btnGettingStarted.performClick();
-////                    btnClicked = false;
-////                }
-//            }
+
         }
     }
 
@@ -510,9 +459,7 @@ private void checkPermission() {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
+
         delayedHide(100);
     }
 
@@ -530,7 +477,6 @@ private void checkPermission() {
         if (actionBar != null) {
             actionBar.hide();
         }
-//        mControlsView.setVisibility(View.GONE);
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay

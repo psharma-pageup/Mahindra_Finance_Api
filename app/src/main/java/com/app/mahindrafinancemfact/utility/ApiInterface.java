@@ -3,6 +3,7 @@ package com.app.mahindrafinancemfact.utility;
 import com.app.mahindrafinancemfact.models.AssetObjectResponseModel;
 import com.app.mahindrafinancemfact.models.BranchResponseModel;
 import com.app.mahindrafinancemfact.models.ImeiModel;
+import com.app.mahindrafinancemfact.models.ImeiObjectModel;
 import com.app.mahindrafinancemfact.models.ProfileObjectModel;
 import com.app.mahindrafinancemfact.models.QRResponseModel;
 import com.app.mahindrafinancemfact.models.RegistrationModel;
@@ -27,7 +28,7 @@ Call<QRResponseModel> login_Service (@FieldMap HashMap<String, String> params, @
 @Headers("Accept: application/json")
 @FormUrlEncoded
 @POST("api/Asset/CustomerInfo")
-Call<ProfileObjectModel> getProfile(@FieldMap HashMap<String, String> params);
+Call<ProfileObjectModel> getProfile(@FieldMap HashMap<String, String> params,@Header("Authorization") String token);
 
 @Headers("Accept:application/json")
 @FormUrlEncoded
@@ -42,26 +43,26 @@ Call<RegistrationModel> Register_Service (@FieldMap HashMap<String, String> para
 @Headers("Accept: application/json")
 @FormUrlEncoded
 @POST("api/AuditRegistration/Resend")
-Call<ImeiModel>Resend_request(@FieldMap HashMap<String, String> params);
+Call<ImeiModel>Resend_request(@FieldMap HashMap<String, String> params,@Header("Authorization") String token);
 
 @Headers("Accept:application/json")
 @FormUrlEncoded
 @POST("api/QR/Detail")
-Call<QRResponseModel> qrdetails (@Field("QRCode")String params );
+Call<QRResponseModel> qrdetails (@Field("QRCode")String params,@Header("Authorization") String token );
 
 @Headers("Accept:application/json")
 @FormUrlEncoded
 @POST("api/Asset/Branch")
-Call<BranchResponseModel> branchdetails (@Field("empCode")String params );
+Call<BranchResponseModel> branchdetails (@Field("empCode")String params,@Header("Authorization") String token );
 
 @Headers("Accept: application/json")
 @FormUrlEncoded
 @POST("api/Asset/AssetList")
-Call<AssetObjectResponseModel>Asset_request(@FieldMap HashMap<String, String> params);
+Call<AssetObjectResponseModel>Asset_request(@FieldMap HashMap<String, String> params,@Header("Authorization") String token);
 
 @Headers("Accept: application/json")
 @FormUrlEncoded
 @POST("api/AuditRegistration/ItemCheck")
-Call<ImeiModel>Final_request(@FieldMap HashMap<String, String> params);
+Call<ImeiObjectModel>Final_request(@FieldMap HashMap<String, String> params, @Header("Authorization") String token);
 }
 

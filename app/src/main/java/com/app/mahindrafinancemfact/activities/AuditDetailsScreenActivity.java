@@ -14,7 +14,6 @@ import com.app.mahindrafinancemfact.databinding.ActivityAuditDetailsScreenBindin
 public class AuditDetailsScreenActivity extends AppCompatActivity {
 
     private ActivityAuditDetailsScreenBinding activityAuditDetailsScreenBinding;
-//    BranchModel branchModel;
     String aid;
     String location;
 
@@ -48,7 +47,6 @@ public class AuditDetailsScreenActivity extends AppCompatActivity {
        aid = getIntent().getStringExtra("aid");
        location = getIntent().getStringExtra("branch");
        setToolbar();
-      //  activityAuditDetailsScreenBinding.tvLocation.setText(branchModel.getBranch_name());
     }
 
     private void setToolbar() {

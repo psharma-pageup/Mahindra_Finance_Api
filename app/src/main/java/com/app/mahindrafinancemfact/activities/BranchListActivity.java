@@ -30,7 +30,6 @@ public class BranchListActivity extends AppCompatActivity {
 
     private ActivityBranchListBinding activityBranchListBinding;
     ArrayList<BranchModel> branchList = new ArrayList<>();
-    BranchModel b = new BranchModel();
     Context context;
    ApiInterface apiInterface;
 
@@ -55,7 +54,6 @@ public class BranchListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activityBranchListBinding.toolbar.setNavigationIcon(R.drawable.back_button);
 
-
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -66,40 +64,6 @@ public class BranchListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-//    private void setClickListener() {
-//        activityBranchListBinding.btnRetry.setOnClickListener(this::onClick);
-//    }
-//    public void onClick(View v) {
-//        int id = v.getId();
-//
-//        if(id == R.id.btnRetry) {
-//            if (!UtilityMethods.isConnectingToInternet(this)) {
-//                activityBranchListBinding.pbLoading.setVisibility(View.GONE);
-//                activityBranchListBinding.tvPleaseWait.setVisibility(View.VISIBLE);
-//                activityBranchListBinding.tvPleaseWait.setText(getResources().getString(R.string.no_net_msg));
-//                return;
-//            }
-//            activityBranchListBinding.btnRetry.setVisibility(View.GONE);
-//             GetBranchListTask();
-//            activityBranchListBinding.pbLoading.setVisibility(View.VISIBLE);
-//            activityBranchListBinding.tvPleaseWait.setVisibility(View.VISIBLE);
-//            activityBranchListBinding.tvPleaseWait.setText(getResources().getString(R.string.please_wait_branch_list_getting_msg));
-//            activityBranchListBinding.rvBranchList.setVisibility (View.GONE);
-//
-//
-//        }
-//
-//
-//
-//    }
-
-//    private void GetBranchListTask() {
-//
-//        BranchListAdaptor adapter = new BranchListAdaptor(this,branchList);
-//        activityBranchListBinding.rvBranchList.setHasFixedSize(true);
-//        activityBranchListBinding.rvBranchList.setLayoutManager(new LinearLayoutManager(this));
-//        activityBranchListBinding.rvBranchList.setAdapter(adapter);
-//    }
 
     private void getBranchList() {
         try {
@@ -112,7 +76,11 @@ public class BranchListActivity extends AppCompatActivity {
                 SharedPreferences sh = getSharedPreferences("SAPCODE", MODE_PRIVATE);
                 String s1 = sh.getString("empCode", "");
 
-                Call<BranchResponseModel> call = apiInterface.branchdetails(s1);
+                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
+                String token = tok.getString("token", "");
+
+
+                Call<BranchResponseModel> call = apiInterface.branchdetails(s1,"Bearer " + token);
                 call.enqueue(new Callback<BranchResponseModel>() {
                     @Override
                     public void onResponse(Call<BranchResponseModel> call, retrofit2.Response<BranchResponseModel> response) {
@@ -124,8 +92,6 @@ public class BranchListActivity extends AppCompatActivity {
                         if (responseType != null) {
 
                             if(responseType.branchresponse != null) {
-
-
                                 branchList = responseType.branchresponse;
                                 BranchListAdaptor adapter = new BranchListAdaptor(context, branchList);
                                 adapter.notifyItemInserted(branchList.size() - 1);

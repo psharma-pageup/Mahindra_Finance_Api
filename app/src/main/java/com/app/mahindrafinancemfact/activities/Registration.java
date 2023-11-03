@@ -32,8 +32,6 @@ public class Registration extends AppCompatActivity {
     ApiInterface apiInterface;
     Context context;
 
-    public LoginModel loginModel = new LoginModel();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +57,10 @@ public class Registration extends AppCompatActivity {
             activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID));
-        //   activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId());
+
+
+
         } else if (manager.getPhoneCount() == 2) {
-//            activityRegistrationBinding.tvImeiOne.setText(manager.getDeviceId(0));
-//            activityRegistrationBinding.tvImeiTwo.setText(manager.getDeviceId(1));
 
             activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
                     context.getContentResolver(),
@@ -70,7 +68,6 @@ public class Registration extends AppCompatActivity {
             activityRegistrationBinding.tvImeiTwo.setText(Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID));
-
 
         }
     }
@@ -82,8 +79,7 @@ public class Registration extends AppCompatActivity {
                 isAllFieldsChecked = CheckAllFields();
                 if(isAllFieldsChecked){
                     serviceCall();
-//                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-//                    startActivity(intent);
+
                 }
 
 
@@ -108,7 +104,7 @@ public class Registration extends AppCompatActivity {
                 params.put("sapCode", activityRegistrationBinding.etSapCode.getText().toString());
                 params.put("imeI1", activityRegistrationBinding.tvImeiOne.getText().toString());
                 params.put("imeI2", activityRegistrationBinding.tvImeiTwo.getText().toString());
-         //       params.put("LOGINTOKEN", HandleFirebaseMessagingService.getToken(context));
+
                 Call<RegistrationModel> call = apiInterface.Register_Service(params);
                 call.enqueue(new Callback<RegistrationModel>() {
                     @Override
@@ -117,26 +113,6 @@ public class Registration extends AppCompatActivity {
                         activityRegistrationBinding.pbLoading.setVisibility(View.GONE);
                         if (registerresponse != null) {
 
-//                                    LoginModel loginModel = (LoginModel) loginResponse.data.get(0);
-//                                    Gson gson = new Gson();
-//                                    Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-////                                    Intent intent = new Intent(context, VerifyActivity.class);
-//                                    intent.putExtra("LoginModel", loginModel.toString());
-//                                    startActivity(intent);
-//                                  loginModel.sapcode = activityRegistrationBinding.etSapCode.getText().toString();
-//                                    isAllFieldsChecked = CheckAllFields();
-//                                    if(isAllFieldsChecked){
-//                                        SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
-//                                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
-//
-//                                        myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
-//                                        myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
-//                                        myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
-//                                        myEdit.apply();
-//                                        SharedPreferencesMethod.setAuthToken(context,loginResponse.data.access_token);
-//                                        Intent intent = new Intent(Registration.this,WelcomeActivity.class);
-//                                        startActivity(intent);
-//                                    }
                             if(registerresponse.data == 1){
                                 SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
                                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
