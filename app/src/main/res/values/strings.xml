@@ -44,6 +44,46 @@
     <string name="yes">Yes</string>
     <string name="please_wait_msg">Please wait...</string>
     <string name="server_error_msg">There is error while getting response from server</string>
+    <string name="profile">Profile</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="scan">Scan</string>
+    <string name="conclude">Conclude</string>
+    <string name="please_enter_sapcode_to_continue">Please Enter SapCode To Continue</string>
+    <string name="empcode">EmpCode</string>
+    <string name="no_audit_tasks_found">NO AUDIT TASKS FOUND</string>
+    <string name="exit_application">Exit Application</string>
+    <string name="adt_id">Audit ID:</string>
+    <string name="total">Total :</string>
+    <string name="completed">Completed:</string>
+    <string name="pending">Pending:</string>
+    <string name="getting_asset_list">Getting Asset List</string>
+    <string name="volume_up_to_flash_on">Volume up to flash on</string>
+    <string name="invalid_qr_code">Invalid QR Code</string>
+    <string name="customer_information">Customer Information</string>
+    <string name="gps_location">GPS Location</string>
+    <string name="please_turn_on_your_location">Please Turn On Your Location</string>
+    <string name="settings">SETTINGS</string>
+    <string name="choose_a_condition">Choose a condition</string>
+    <string name="working_condition">Working Condition</string>
+    <string name="not_in_use">Not in use</string>
+    <string name="scrap">Scrap</string>
+    <string name="not_in_working_condition">Not in Working Condition</string>
+    <string name="assetlist">AssetList</string>
+    <string name="invalid_qr">Invalid QR</string>
+    <string name="please_scan_qr_code_first">Please Scan QR Code first</string>
+    <string name="unsuccessful">Unsuccessful</string>
+    <string name="successful">Successful</string>
+    <string name="this_field_is_required">This field is required</string>
+    <string name="registration_successfull">REGISTRATION SUCCESSFULL</string>
+    <string name="employee_is_inactive">Employee is Inactive</string>
+    <string name="your_account_has_been_locked_kindly_resend_registration_request">Your Account Has Been locked, Kindly Resend Registration Request</string>
+    <string name="resend_request">Resend Request</string>
+    <string name="application_under_maintainence">Application Under Maintainence</string>
+    <string name="account_has_been_locked_due_to_inactive_employee">Account has been locked due to inactive employee</string>
+    <string name="imresponse_is_null">imresponse is null</string>
+    <string name="registration_successful">Registration successful</string>
+    <string name="registration_failed">Registration Failed</string>
+    <string name="onfailure">onFailure</string>
 
 
 </resources>

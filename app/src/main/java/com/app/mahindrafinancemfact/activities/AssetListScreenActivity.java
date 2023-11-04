@@ -30,7 +30,6 @@ public class AssetListScreenActivity extends AppCompatActivity {
     private ActivityAssetListScreenBinding activityAssetListScreenBinding;
     ArrayList assetList = new ArrayList<>();
     ApiInterface apiInterface;
-
     Context context;
     String s1;
     String s2;
@@ -48,6 +47,7 @@ public class AssetListScreenActivity extends AppCompatActivity {
         s2 = ai.getString("aid","");
         init();
     }
+    /** Initialize apiinterface*/
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
         setToolbar();
@@ -59,6 +59,7 @@ public class AssetListScreenActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         activityAssetListScreenBinding.btnAuditDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +78,14 @@ public class AssetListScreenActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        activityAssetListScreenBinding.btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getAssetList();
+            }
+        });
     }
+    /**setup Toolbar*/
     private void setToolbar() {
         setSupportActionBar(activityAssetListScreenBinding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -93,14 +101,12 @@ public class AssetListScreenActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /** this function passes sapcode and audit id as params and we receive asset list and the count of total,completed and pending assets in response*/
     private void getAssetList() {
         try {
 
             if (UtilityMethods.isConnectingToInternet(context)) {
-                activityAssetListScreenBinding.llLogo.setVisibility(View.VISIBLE);
-                activityAssetListScreenBinding.llinternet.setVisibility(View.GONE);
-                activityAssetListScreenBinding.load.setVisibility(View.VISIBLE);
-
+                showMsgView(View.GONE,View.VISIBLE,View.GONE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("empCode", s1);
                 params.put("aid", s2);
@@ -111,7 +117,7 @@ public class AssetListScreenActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<AssetObjectResponseModel> call, retrofit2.Response<AssetObjectResponseModel> response) {
                         AssetObjectResponseModel responseType = response.body();
-                        activityAssetListScreenBinding.load.setVisibility(View.GONE);
+                        showMsgView(View.GONE,View.GONE,View.GONE);
 
                         if (responseType != null) {
 
@@ -126,22 +132,28 @@ public class AssetListScreenActivity extends AppCompatActivity {
                             activityAssetListScreenBinding.rvAssetList.setLayoutManager(new LinearLayoutManager(context));
                             activityAssetListScreenBinding.rvAssetList.setAdapter(adapter);
                         } else {
-                            Toast.makeText(AssetListScreenActivity.this, getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                            showMsgView(View.GONE,View.GONE,View.VISIBLE);
                         }
                     }
                     @Override
                     public void onFailure(Call<AssetObjectResponseModel> call, Throwable t) {
-                        Toast.makeText(AssetListScreenActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                        showMsgView(View.GONE,View.GONE,View.VISIBLE);
                     }
                 });
             } else {
-                activityAssetListScreenBinding.llLogo.setVisibility(View.GONE);
-                activityAssetListScreenBinding.llinternet.setVisibility(View.VISIBLE);
-                Toast.makeText(AssetListScreenActivity.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
+                showMsgView(View.VISIBLE,View.GONE, View.GONE);
 
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
+        }
+    }
+    void showMsgView(int containerVisibility, int loadingVisibility, int srvr) {
+        try {
+          activityAssetListScreenBinding.llinternet.setVisibility(containerVisibility);
+          activityAssetListScreenBinding.load.setVisibility(loadingVisibility);
+          activityAssetListScreenBinding.servererror.setVisibility(srvr);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

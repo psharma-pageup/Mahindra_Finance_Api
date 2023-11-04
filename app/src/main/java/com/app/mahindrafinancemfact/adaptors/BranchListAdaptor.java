@@ -85,7 +85,6 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
     }
     public static class branchViewHolder extends RecyclerView.ViewHolder {
 
-
         private BranchListItemBinding branchListItemBinding;
 
 

@@ -43,12 +43,20 @@ public class BranchListActivity extends AppCompatActivity {
         init();
     }
 
+    /** initialize the api interface and calls setToolbar() and getBranchList() functions */
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
         setToolbar();
         getBranchList();
+        activityBranchListBinding.btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getBranchList();
+            }
+        });
     }
 
+    /** set up toolbar*/
     private void setToolbar() {
         setSupportActionBar(activityBranchListBinding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -65,13 +73,15 @@ public class BranchListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * sapcode and bearer token is passed as parameters to receive branchlist as response
+     */
+
     private void getBranchList() {
         try {
 
             if (UtilityMethods.isConnectingToInternet(context)) {
-                activityBranchListBinding.llLogo.setVisibility(View.GONE);
-                activityBranchListBinding.load.setVisibility(View.VISIBLE);
-                activityBranchListBinding.llinternet.setVisibility(View.GONE);
+                showMsgView(View.GONE,View.VISIBLE,View.GONE);
 
                 SharedPreferences sh = getSharedPreferences("SAPCODE", MODE_PRIVATE);
                 String s1 = sh.getString("empCode", "");
@@ -85,12 +95,8 @@ public class BranchListActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<BranchResponseModel> call, retrofit2.Response<BranchResponseModel> response) {
                         BranchResponseModel responseType = response.body();
-                        activityBranchListBinding.llLogo.setVisibility(View.VISIBLE);
-                        activityBranchListBinding.load.setVisibility(View.GONE);
-
-
+                        showMsgView(View.GONE,View.GONE,View.GONE);
                         if (responseType != null) {
-
                             if(responseType.branchresponse != null) {
                                 branchList = responseType.branchresponse;
                                 BranchListAdaptor adapter = new BranchListAdaptor(context, branchList);
@@ -111,26 +117,29 @@ public class BranchListActivity extends AppCompatActivity {
                             }
 
                         } else {
-                            Toast.makeText(BranchListActivity.this, getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
-
+                            showMsgView(View.GONE,View.GONE,View.VISIBLE);
                         }
                     }
 
                     @Override
                     public void onFailure(Call<BranchResponseModel> call, Throwable t) {
-                        Toast.makeText(BranchListActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
-
+                        showMsgView(View.GONE,View.GONE,View.VISIBLE);
                     }
                 });
             } else {
-                activityBranchListBinding.llinternet.setVisibility(View.VISIBLE);
-                activityBranchListBinding.llLogo.setVisibility(View.GONE);
-                Toast.makeText(BranchListActivity.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
-
-
+                showMsgView(View.VISIBLE,View.GONE,View.GONE);
             }
         } catch (Exception e) {
 
+            e.printStackTrace();
+        }
+    }
+    void showMsgView(int containerVisibility, int loadingVisibility, int srvr) {
+        try {
+            activityBranchListBinding.llinternet.setVisibility(containerVisibility);
+            activityBranchListBinding.load.setVisibility(loadingVisibility);
+            activityBranchListBinding.servererror.setVisibility(srvr);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

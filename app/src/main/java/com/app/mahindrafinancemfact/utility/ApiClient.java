@@ -15,9 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     public static String BASE_URL = "https://bams-mahindra.azurewebsites.net/";
-//    public static String BASE_IMAGE_URL = "http://192.168.29.250:8000/";
-//    public static String BASE_PRODUCT_IMAGE_URL = BASE_IMAGE_URL + "";
-
 
     private static Retrofit retrofit = null;
 
@@ -28,35 +25,17 @@ public class ApiClient {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS);
 
-
-//        clientBuilder.addInterceptor(new Interceptor() {
-//            @Override
-//            public Response intercept(Chain chain) throws IOException {
-//                Request request = chain.request();
-//                Request updatedRequest = request.newBuilder().addHeader("Authorization", SharedPreferencesMethod.getAuthToken(context)).build();
-//                Log.e("restrofit intercept",updatedRequest.toString());
-//                return chain.proceed(updatedRequest);
-//            }
-//        });
-
-
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(interceptor);
         }
 
-
-
-
         OkHttpClient client = clientBuilder.build();
-
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
         Log.e("restrofit ",retrofit.toString());
-
         return retrofit;
 
 

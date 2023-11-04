@@ -27,7 +27,7 @@ import retrofit2.Callback;
 public class MessageActivity extends AppCompatActivity {
 
     private ActivityMessageBinding activityMessageBinding;
-    Serializable imeiresponse;
+    Serializable imeiResponse;
     ApiInterface apiInterface;
     Context context;
     String imei1;
@@ -38,10 +38,14 @@ public class MessageActivity extends AppCompatActivity {
         activityMessageBinding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(activityMessageBinding.getRoot());
         init();
-        imeiresponse = getIntent().getSerializableExtra("imeiresponse");
+        imeiResponse = getIntent().getSerializableExtra("imeiresponse");
         setMessage();
 
     }
+
+    /**
+     * initialize apiinterface
+     * */
     public void init(){
         try {
             context = this;
@@ -54,20 +58,23 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * According to the response received through intent from splash screen activity relevant messages are shown
+     * */
     public void setMessage(){
-        if(imeiresponse != null) {
-            if (imeiresponse.equals(4)) {
-                activityMessageBinding.tvMessage.setText("Your Account Has Been locked, Kindly Resend Registration Request");
-                activityMessageBinding.btnMessage.setText("Resend Request");
+        if(imeiResponse != null) {
+            if (imeiResponse.equals(4)) {
+                activityMessageBinding.tvMessage.setText(R.string.your_account_has_been_locked_kindly_resend_registration_request);
+                activityMessageBinding.btnMessage.setText(R.string.resend_request);
                 activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         getImei();
                     }
                 });
-            } else if (imeiresponse.equals(0)) {
-                activityMessageBinding.tvMessage.setText("Application Under Maintainence");
-                activityMessageBinding.btnMessage.setText("Exit Application");
+            } else if (imeiResponse.equals(0)) {
+                activityMessageBinding.tvMessage.setText(R.string.application_under_maintainence);
+                activityMessageBinding.btnMessage.setText(R.string.exit_application);
                 activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -75,9 +82,9 @@ public class MessageActivity extends AppCompatActivity {
                     }
                 });
 
-            } else if (imeiresponse.equals(5)) {
-                activityMessageBinding.tvMessage.setText("Account has been locked due to inactive employee");
-                activityMessageBinding.btnMessage.setText("Exit Application");
+            } else if (imeiResponse.equals(5)) {
+                activityMessageBinding.tvMessage.setText(R.string.account_has_been_locked_due_to_inactive_employee);
+                activityMessageBinding.btnMessage.setText(R.string.exit_application);
                 activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -86,26 +93,28 @@ public class MessageActivity extends AppCompatActivity {
                 });
             }
         }else{
-            Toast.makeText(context, "imresponse is null", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.imresponse_is_null, Toast.LENGTH_SHORT).show();
         }
     }
 
-
+/**
+ * getting the imei number from the device
+ * */
     public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
             imei1 = manager.getDeviceId();
-            SendImei();
+            sendImei();
 
         } else if (manager.getPhoneCount() == 2) {
 
             imei1 = manager.getDeviceId(0);
             imei2 = manager.getDeviceId(1);
-            SendImei();
+            sendImei();
 
         }
     }
-    public void SendImei(){
+    public void sendImei(){
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
 
@@ -123,17 +132,17 @@ public class MessageActivity extends AppCompatActivity {
 
 
                             if(imeiresponse.data.data == 1){
-                                Toast.makeText(MessageActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MessageActivity.this, R.string.registration_successful, Toast.LENGTH_SHORT).show();
                                 finishAffinity();
                             } else if (imeiresponse.data.data == 0) {
                                 new DialogSheet(MessageActivity.this,true)
-                                        .setTitle("Registration Failed")
+                                        .setTitle(R.string.registration_failed)
                                         .setColoredNavigationBar(true)
                                         .setTitleTextColor(getResources().getColor(R.color.colorPrimaryDark))
                                         .setTitleTextSize(30)
                                         .setCancelable(true)
                                         .setBackgroundColor(getResources().getColor(R.color.bgcolor))
-                                        .setNegativeButton("Cancel", new DialogSheet.OnNegativeClickListener() {
+                                        .setNegativeButton(R.string.cancel, new DialogSheet.OnNegativeClickListener() {
                                             @Override
                                             public void onClick(@Nullable View view) {
                                                 finishAffinity();

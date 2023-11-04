@@ -6,6 +6,4 @@ public class QRResponseModel {
     @SerializedName("data")
     public QRResponseObjectModel data = new QRResponseObjectModel();
 
-    @SerializedName("QRCode")
-    public String QRCode;
 }

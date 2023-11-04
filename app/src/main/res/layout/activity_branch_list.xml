@@ -8,7 +8,6 @@
     android:layout_gravity="center"
     android:background="@color/white"
     android:gravity="center"
-
     android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.app.mahindrafinancemfact.activities.BranchListActivity">
@@ -81,26 +80,7 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="1">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnRetry"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/rounded_button"
-                android:text="@string/retry_btn_text"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:visibility="gone" />
-
-        </LinearLayout>
 
 
     </LinearLayout>
@@ -123,7 +103,7 @@
 
             android:gravity="center"
             android:padding="20dp"
-            android:text="NO AUDIT TASKS FOUND"
+            android:text="@string/no_audit_tasks_found"
             android:textColor="@android:color/black"
             android:textSize="30sp" />
 
@@ -135,7 +115,7 @@
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/rounded_button"
-            android:text="Exit Application"
+            android:text="@string/exit_application"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:visibility="visible" />
@@ -147,6 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:background="@color/white"
         android:layout_marginTop="-40dp"
         android:gravity="center"
         android:orientation="vertical">
@@ -161,7 +142,51 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Internet Connection "
+            android:text="@string/no_internet_connection"
+            android:textSize="30sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRetry"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/rounded_button"
+                android:text="@string/retry_btn_text"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:visibility="visible" />
+
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/servererror"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/white"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/error" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/server_error_msg"
             android:textSize="30sp"
             android:textStyle="bold"/>
     </LinearLayout>

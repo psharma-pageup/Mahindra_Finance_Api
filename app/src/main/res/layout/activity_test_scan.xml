@@ -36,7 +36,7 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
            android:background="@drawable/rounded_button"
-            android:text="Scan" />
+            android:text="@string/scan" />
         <ProgressBar
         android:id="@+id/pbLoading"
         android:layout_width="24dp"
@@ -61,7 +61,7 @@
             android:textColor="@android:color/white"
            android:background="@drawable/rounded_button"
             android:onClick="conclude"
-            android:text="Conclude" />
+            android:text="@string/conclude" />
         <ProgressBar
             android:id="@+id/pbLoading2"
             android:layout_width="24dp"
@@ -82,15 +82,6 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/centerHorizont" />
 
-<!--    <ImageView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_toRightOf="@id/centerHorizont"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_alignTop="@id/buttonsLayout"-->
-<!--        android:id="@+id/barcodePreview" />-->
-
     <LinearLayout
         android:id="@+id/llinternet"
         android:layout_width="match_parent"
@@ -110,8 +101,32 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Internet Connection "
+            android:text="@string/no_internet_connection"
             android:textSize="30sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/servererror"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/error" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/server_error_msg"
+            android:textSize="15sp"
             android:textStyle="bold"/>
     </LinearLayout>
 

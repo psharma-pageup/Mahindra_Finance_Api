@@ -1,5 +1,7 @@
 package com.app.mahindrafinancemfact.activities;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 
@@ -16,9 +18,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,13 +57,11 @@ public class SplashScreen extends AppCompatActivity {
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
     private static final boolean AUTO_HIDE = true;
-
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -75,7 +72,14 @@ public class SplashScreen extends AppCompatActivity {
     private SharedPreferences permissionStatus;
     private static final int PERMISSION_CALLBACK_CONSTANT = 101;
     private static final int REQUEST_PERMISSION_SETTING = 102;
-
+    private ActivitySplashScreenBinding binding;
+    private ApiInterface apiInterface;
+    Context context;
+    String imei1;
+    String imei2;
+    String qrResponse;
+    private boolean isClickable = true;
+    private final long CLICK_DELAY = 1000;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -138,16 +142,6 @@ public class SplashScreen extends AppCompatActivity {
             return false;
         }
     };
-    private ActivitySplashScreenBinding binding;
-    private ApiInterface apiInterface;
-    Context context;
-    String imei1;
-    String imei2;
-    LocationManager locationManager;
-    String r;
-    private boolean isClickable = true;
-    private final long CLICK_DELAY = 1000;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,27 +150,21 @@ public class SplashScreen extends AppCompatActivity {
         binding = ActivitySplashScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
         mVisible = true;
         mContentView = binding.fullscreenContent;
-
-
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
             }
         });
-
-
         init();
-
-
         setView();
-
-
     }
 
+    /**
+     * initialize apiinterface
+     * */
     public void init() {
         try {
             context = this;
@@ -187,6 +175,9 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
+    /**
+     * binding the clicklisteners
+     * */
     public void setView() {
         binding.btnGettingStarted.setOnClickListener(this::onClick);
         binding.btnQrDetails.setOnClickListener(this::onClick);
@@ -197,7 +188,7 @@ public class SplashScreen extends AppCompatActivity {
         if (id == R.id.btnGettingStarted) {
             if (isClickable) {
                 getImei();
-                SendImei();
+                sendImei();
                 isClickable = false;
 
                 Handler handler = new Handler();
@@ -211,7 +202,7 @@ public class SplashScreen extends AppCompatActivity {
 
         } else if (id == R.id.btnQrDetails) {
             if (isClickable) {
-                ScanCode();
+                scanCode();
                 isClickable = false;
 
                 Handler handler = new Handler();
@@ -225,9 +216,13 @@ public class SplashScreen extends AppCompatActivity {
 
         }
     }
-    private void ScanCode() {
+
+    /**
+     * QR Scan
+     * */
+    private void scanCode() {
         ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume up to flash on");
+        options.setPrompt(getString(R.string.volume_up_to_flash_on));
         options.setBeepEnabled(true);
         options.setCaptureActivity(CaptureActivity.class);
         barLauncher.launch(options);
@@ -236,24 +231,26 @@ public class SplashScreen extends AppCompatActivity {
         if(result.getContents() != null)
         {
 
-            r = result.getContents();
-            if(r.length() == 30){
-                QRServiceCall();
+            qrResponse = result.getContents();
+            if(qrResponse.length() == 30){
+                qrservicecall();
             }else{
-                Toast.makeText(context, "Invalid QR Code", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.invalid_qr_code,LENGTH_SHORT).show();
             }
         }
     });
-    private void QRServiceCall() {
+
+    /**
+     * passing the string received after scanning qr and bearer token as params and receive customer information
+     * */
+    private void qrservicecall() {
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
 
-                binding.llinternet.setVisibility(View.GONE);
-                binding.net.setVisibility(View.VISIBLE);
+                showMsgView(View.VISIBLE,View.GONE,View.GONE);
                 SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = tok.getString("token", "");
-
-                String params = r;
+                String params = qrResponse;
                 Call<QRResponseModel> call = apiInterface.qrdetails(params,"Bearer " + token);
                 call.enqueue(new Callback<QRResponseModel>() {
                     @Override
@@ -261,29 +258,27 @@ public class SplashScreen extends AppCompatActivity {
                         QRResponseModel qrResponseModel = response.body();
                         if (qrResponseModel != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
-                            builder.setTitle("Customer Information");
+                            builder.setTitle(R.string.customer_information);
                             builder.setMessage(qrResponseModel.data.customerInfo);
                             builder.show();
                         } else
                         {
-                            Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                            showMsgView(View.GONE,View.GONE,View.VISIBLE);
                         }
                     }
                     @Override
                     public void onFailure(Call<QRResponseModel> call, Throwable t) {
 
-                        Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        showMsgView(View.GONE,View.GONE,View.VISIBLE);
                     }
                 });
             } else {
-                Toast.makeText(SplashScreen.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
-                binding.llinternet.setVisibility(View.VISIBLE);
-                binding.net.setVisibility(View.GONE);
+                showMsgView(View.GONE,View.VISIBLE,View.GONE);
 
             }
         }
         catch (Exception e) {
-            Toast.makeText(SplashScreen.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(SplashScreen.this, e.getMessage(), LENGTH_SHORT).show();
 
         }
 
@@ -305,15 +300,14 @@ public class SplashScreen extends AppCompatActivity {
                     Settings.Secure.ANDROID_ID);
         }
     }
-    public void SendImei(){
+    public void sendImei(){
     serviceCall();
     }
     public void serviceCall(){
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
                 binding.pbLoading.setVisibility(View.VISIBLE);
-                binding.llinternet.setVisibility(View.GONE);
-                binding.net.setVisibility(View.VISIBLE);
+                showMsgView(View.VISIBLE,View.GONE,View.GONE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imeI1", imei1);
                 params.put("imeI2", imei2);
@@ -339,28 +333,26 @@ public class SplashScreen extends AppCompatActivity {
                                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                                 myEdit.putString("token", token);
                                 myEdit.apply();
-                                Intent intent = new Intent(SplashScreen.this,WelcomeActivity.class);
+                                Intent intent = new Intent(SplashScreen.this, ProfileActivity.class);
                                 startActivity(intent);
                             }
                         } else
                         {
-                            Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                            showMsgView(View.VISIBLE,View.GONE,View.VISIBLE);
                         }
                     }
                     @Override
                     public void onFailure(Call<ImeiModel> call, Throwable t) {
 
-                        Toast.makeText(SplashScreen.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        showMsgView(View.VISIBLE,View.GONE,View.VISIBLE);
                     }
                 });
             } else {
-                Toast.makeText(SplashScreen.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
-                binding.llinternet.setVisibility(View.VISIBLE);
-                binding.net.setVisibility(View.GONE);
+                showMsgView(View.GONE,View.VISIBLE,View.GONE);
             }
         }
         catch (Exception e) {
-            Toast.makeText(SplashScreen.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(SplashScreen.this, e.getMessage(), LENGTH_SHORT).show();
         }
 
     }
@@ -507,6 +499,17 @@ private void checkPermission() {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    void showMsgView(int containerVisibility, int nointernetvisibillity, int srvrerr) {
+        try {
+            binding.llinternet.setVisibility(nointernetvisibillity);
+            binding.net.setVisibility(containerVisibility);
+            binding.servererror.setVisibility(srvrerr);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

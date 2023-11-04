@@ -10,6 +10,9 @@
     android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.app.mahindrafinancemfact.activities.AssetListScreenActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
@@ -54,14 +57,13 @@
             android:paddingBottom="5dp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:text="Audit ID:"/>
+            android:text="@string/adt_id"/>
 
         <TextView
             android:id="@+id/tvAuditId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="fmldkfms"
             android:textColor="@android:color/black"/>
     </LinearLayout>
 
@@ -92,7 +94,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
                     android:textColor="@android:color/black"
-                    android:text="Total :"/>
+                    android:text="@string/total"/>
 
                 <TextView
                     android:id="@+id/total"
@@ -124,7 +126,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
                     android:textColor="@android:color/black"
-                    android:text="Completed:"/>
+                    android:text="@string/completed"/>
 
                 <TextView
                     android:id="@+id/completed"
@@ -158,7 +160,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
                     android:textColor="@android:color/black"
-                    android:text="Pending:"/>
+                    android:text="@string/pending"/>
 
                 <TextView
                     android:id="@+id/pending"
@@ -286,14 +288,39 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="15dp"
-            android:text="Getting Asset List"
+            android:text="@string/getting_asset_list"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llinternet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_marginTop="-40dp"
+        android:gravity="center"
+        android:background="@color/white"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/nointernet" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_internet_connection"
+            android:textSize="30sp"
+            android:textStyle="bold"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:weightSum="1">
 
@@ -307,37 +334,33 @@
                 android:text="@string/retry_btn_text"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
         </LinearLayout>
-
-
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llinternet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_marginTop="-40dp"
-        android:gravity="center"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/nointernet" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No Internet Connection "
-            android:textSize="30sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
-
-
-
-
+        <LinearLayout
+            android:id="@+id/servererror"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="-40dp"
+            android:gravity="center"
+            android:background="@color/white"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/error" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/server_error_msg"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

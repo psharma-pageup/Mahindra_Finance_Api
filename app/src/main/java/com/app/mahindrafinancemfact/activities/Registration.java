@@ -7,20 +7,14 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.app.mahindrafinancemfact.R;
 import com.app.mahindrafinancemfact.databinding.ActivityRegistrationBinding;
 import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.UtilityMethods;
-
-import com.app.mahindrafinancemfact.models.LoginModel;
 import com.app.mahindrafinancemfact.models.RegistrationModel;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
-
 import java.util.HashMap;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -41,6 +35,10 @@ public class Registration extends AppCompatActivity {
        getImei();
        clickListener();
     }
+
+    /**
+     * initialize apiinterface
+     * */
     public void init(){
         try {
             context = this;
@@ -51,6 +49,10 @@ public class Registration extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    /**
+     * getting the imei number from device
+     * */
     public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
@@ -71,12 +73,16 @@ public class Registration extends AppCompatActivity {
 
         }
     }
+
+    /**
+     * calling the serviceCall() function on the click of submit button
+     * */
     public void clickListener(){
         activityRegistrationBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                isAllFieldsChecked = CheckAllFields();
+                isAllFieldsChecked = checkAllFields();
                 if(isAllFieldsChecked){
                     serviceCall();
 
@@ -86,20 +92,25 @@ public class Registration extends AppCompatActivity {
             }
         });
     }
-    private boolean CheckAllFields() {
+
+    /**
+     * validations on edittext for sapcode
+     * */
+    private boolean checkAllFields() {
         if (activityRegistrationBinding.etSapCode.length() == 0) {
-            activityRegistrationBinding.etSapCode.setError("This field is required");
+            activityRegistrationBinding.etSapCode.setError(getString(R.string.this_field_is_required));
             return false;
         }
         return true;
     }
 
+    /**
+     * Passing Sapcode and imei number to register an employee
+     * */
     public void serviceCall(){
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
-                showProgressDialog();
-                activityRegistrationBinding.llnet.setVisibility(View.VISIBLE);
-                activityRegistrationBinding.llinternet.setVisibility(View.GONE);
+                showMsgView(View.GONE, View.VISIBLE,View.GONE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("sapCode", activityRegistrationBinding.etSapCode.getText().toString());
                 params.put("imeI1", activityRegistrationBinding.tvImeiOne.getText().toString());
@@ -110,37 +121,35 @@ public class Registration extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<RegistrationModel> call, retrofit2.Response<RegistrationModel> response) {
                         RegistrationModel registerresponse = response.body();
-                        activityRegistrationBinding.pbLoading.setVisibility(View.GONE);
+                        showMsgView(View.GONE, View.GONE,View.GONE);
                         if (registerresponse != null) {
 
                             if(registerresponse.data == 1){
+                                activityRegistrationBinding.inactive.setVisibility(View.GONE);
                                 SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
                                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                                 myEdit.putString("sapcode", activityRegistrationBinding.etSapCode.getText().toString());
                                 myEdit.putString("imei1", activityRegistrationBinding.tvImeiOne.getText().toString());
                                 myEdit.putString("imei2", activityRegistrationBinding.tvImeiTwo.getText().toString());
                                 myEdit.apply();
-                                Toast.makeText(Registration.this, "REGISTRATION SUCCESSFULL", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Registration.this, R.string.registration_successfull, Toast.LENGTH_SHORT).show();
                                 finish();
                             } else if (registerresponse.data == 0) {
-                                Toast.makeText(Registration.this, "Employee is Inactive", Toast.LENGTH_SHORT).show();
-
+                                activityRegistrationBinding.inactive.setVisibility(View.VISIBLE);
                             }
                         } else
                         {
-                            Toast.makeText(Registration.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                            showMsgView(View.GONE, View.GONE,View.VISIBLE);
                         }
                     }
                     @Override
                     public void onFailure(Call<RegistrationModel> call, Throwable t) {
 
-                        Toast.makeText(Registration.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
+                        showMsgView(View.GONE, View.GONE,View.VISIBLE);
                     }
                 });
             } else {
-                Toast.makeText(Registration.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
-                activityRegistrationBinding.llnet.setVisibility(View.GONE);
-                activityRegistrationBinding.llinternet.setVisibility(View.VISIBLE);
+                showMsgView(View.VISIBLE, View.GONE,View.GONE);
 
             }
         }
@@ -149,7 +158,17 @@ public class Registration extends AppCompatActivity {
 
         }
     }
-    private void showProgressDialog() {
-       activityRegistrationBinding.pbLoading.setVisibility(View.VISIBLE);
+
+    /**
+     * loader
+     * */
+    void showMsgView(int containerVisibility,int loading,int srvr) {
+        try {
+            activityRegistrationBinding.llinternet.setVisibility(containerVisibility);
+            activityRegistrationBinding.pbLoading.setVisibility(loading);
+            activityRegistrationBinding.servererror.setVisibility(srvr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

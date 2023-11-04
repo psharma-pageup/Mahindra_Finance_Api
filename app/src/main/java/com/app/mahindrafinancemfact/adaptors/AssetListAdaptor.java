@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.app.mahindrafinancemfact.databinding.AssetListItemBinding;
-import com.app.mahindrafinancemfact.databinding.BranchListItemBinding;
 
 import java.util.ArrayList;
 

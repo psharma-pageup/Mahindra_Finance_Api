@@ -22,11 +22,6 @@ public interface ApiInterface {
 
 @Headers("Accept: application/json")
 @FormUrlEncoded
-@POST("otp_login")
-Call<QRResponseModel> login_Service (@FieldMap HashMap<String, String> params, @Header("Authorization") String token);
-
-@Headers("Accept: application/json")
-@FormUrlEncoded
 @POST("api/Asset/CustomerInfo")
 Call<ProfileObjectModel> getProfile(@FieldMap HashMap<String, String> params,@Header("Authorization") String token);
 
