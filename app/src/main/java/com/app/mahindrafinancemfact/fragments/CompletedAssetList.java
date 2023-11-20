@@ -114,7 +114,6 @@ public class CompletedAssetList extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                fragmentCompletedAssetListBinding.progressBar.setVisibility(View.VISIBLE);
 
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int visibleItemCount = layoutManager.getChildCount();
@@ -125,6 +124,8 @@ public class CompletedAssetList extends Fragment {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= pageSize) {
+                        fragmentCompletedAssetListBinding.progressBar.setVisibility(View.VISIBLE);
+
                         pageIndex++;
                         getAssetList(pageIndex, pageSize);
                     }

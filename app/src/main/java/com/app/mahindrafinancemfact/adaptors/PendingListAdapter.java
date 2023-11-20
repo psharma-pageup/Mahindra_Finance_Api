@@ -81,7 +81,6 @@ public class PendingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                String extracted = null;
                if (parts.length >= 1) {
                    extracted = parts[0];
-                   Toast.makeText(context, extracted, Toast.LENGTH_SHORT).show();
                } else {
                    Toast.makeText(context, "No Delimiter", Toast.LENGTH_SHORT).show();
                }

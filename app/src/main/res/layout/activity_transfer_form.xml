@@ -23,8 +23,6 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:text="Transfer Form"/>
-
-
     </androidx.appcompat.widget.Toolbar>
 
 
