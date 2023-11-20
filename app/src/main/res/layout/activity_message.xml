@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:gravity="center"
-        android:padding="16dp"
+        android:padding="@dimen/dimen16dp"
         android:orientation="vertical"
         android:layout_weight="0.6">
 
@@ -25,7 +25,7 @@
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="34sp"
+            android:textSize="@dimen/dimen34sp"
             android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@android:color/black"
@@ -36,7 +36,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dimen0dp"
         android:layout_weight="0.4"
         android:gravity="center"
         android:weightSum="1"
@@ -44,7 +44,7 @@
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="@dimen/dimen0dp"
             android:layout_weight="0.7"
             android:layout_height="match_parent">
 
@@ -59,10 +59,10 @@
                 android:textColor="@android:color/white" />
             <ProgressBar
                 android:id="@+id/pbLoading"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="@dimen/dimen24dp"
+                android:layout_height="@dimen/dimen24dp"
                 android:layout_centerInParent="true"
-                android:elevation="10dp"
+                android:elevation="@dimen/dimen10dp"
                 android:indeterminate="true"
                 android:indeterminateTint="@android:color/white"
                 android:indeterminateTintMode="src_atop"

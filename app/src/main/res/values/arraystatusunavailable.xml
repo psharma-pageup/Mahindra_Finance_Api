@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="unavailable">
+        <item>Sold</item>
+        <item>Theft</item>
+        <item>Transfer</item>
+        <item>Sent for Repair</item>
+    </string-array>
+</resources>

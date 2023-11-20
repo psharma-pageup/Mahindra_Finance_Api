@@ -17,7 +17,6 @@
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
         android:visibility="visible"
-        android:gravity="center"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
@@ -30,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="@dimen/dimen20sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:text="@string/branch_list_title"/>
@@ -39,13 +38,53 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBranchList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:visibility="visible"
             android:overScrollMode="never"
            >
 
         </androidx.recyclerview.widget.RecyclerView>
 
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_margin="@dimen/dimen10dp"
+            android:text="GRN" />
+
+        <Button
+            android:id="@+id/btntransfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen10dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="1"
+            android:text="Transfer" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dimen10dp"
+            android:enabled="false"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="1"
+            android:text="Sold" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/load"
@@ -61,10 +100,10 @@
 
         <ProgressBar
             android:id="@+id/pbLoading"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/dimen30dp"
+            android:layout_height="@dimen/dimen30dp"
             android:layout_centerInParent="true"
-            android:elevation="10dp"
+            android:elevation="@dimen/dimen10dp"
             android:indeterminate="true"
             android:indeterminateTint="@android:color/black"
             android:indeterminateTintMode="src_atop" />
@@ -75,10 +114,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:padding="15dp"
+            android:padding="@dimen/dimen15dp"
             android:text="@string/please_wait_branch_list_getting_msg"
             android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:textSize="@dimen/dimen18sp" />
 
 
 
@@ -102,17 +141,17 @@
             android:layout_gravity="center"
 
             android:gravity="center"
-            android:padding="20dp"
+            android:padding="@dimen/dimen20dp"
             android:text="@string/no_audit_tasks_found"
             android:textColor="@android:color/black"
-            android:textSize="30sp" />
+            android:textSize="@dimen/dimen30sp" />
 
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/exit"
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
+            android:layout_width="@dimen/dimen200dp"
+            android:layout_height="@dimen/dimen50dp"
+            android:layout_marginTop="@dimen/dimen20dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/rounded_button"
             android:text="@string/exit_application"
@@ -128,22 +167,22 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:background="@color/white"
-        android:layout_marginTop="-40dp"
+        android:layout_marginTop="@dimen/dimennegative40dp"
         android:gravity="center"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_width="@dimen/dimen200dp"
+            android:layout_height="@dimen/dimen200dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginBottom="@dimen/dimen10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/nointernet" />
+            android:src="@drawable/wireless" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_internet_connection"
-            android:textSize="30sp"
+            android:textSize="@dimen/dimen25sp"
             android:textStyle="bold"/>
         <LinearLayout
             android:layout_width="match_parent"
@@ -154,9 +193,9 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnRetry"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="@dimen/dimen200dp"
+                android:layout_height="@dimen/dimen50dp"
+                android:layout_marginTop="@dimen/dimen20dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/rounded_button"
                 android:text="@string/retry_btn_text"
@@ -172,22 +211,22 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         android:background="@color/white"
-        android:layout_marginTop="-40dp"
+        android:layout_marginTop="@dimen/dimennegative40dp"
         android:gravity="center"
         android:orientation="vertical">
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="@dimen/dimen200dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginBottom="@dimen/dimen10dp"
             android:scaleType="fitCenter"
             android:src="@drawable/error" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/server_error_msg"
-            android:textSize="30sp"
+            android:textSize="@dimen/dimen30sp"
             android:textStyle="bold"/>
     </LinearLayout>
 

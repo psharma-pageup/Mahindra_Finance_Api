@@ -2,30 +2,30 @@ package com.app.mahindrafinancemfact.activities;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
-
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.app.mahindrafinancemfact.R;
 import com.app.mahindrafinancemfact.models.ImeiObjectModel;
@@ -38,8 +38,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
@@ -47,13 +45,14 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
-
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -65,7 +64,6 @@ public class ScanActivity extends CaptureActivity {
     FusedLocationProviderClient mFusedLocationClient;
     String latitude;
     String longitude;
-
     Bitmap image;
     String base64Image;
     Context context;
@@ -73,29 +71,23 @@ public class ScanActivity extends CaptureActivity {
     String s1;
     String s2;
     ApiInterface apiInterface;
-
     LinearLayout buttonslayout;
-
     ProgressBar pbloading;
-    ProgressBar pbloading2;
     View view;
-
     LinearLayout llinternet;
-
     LinearLayout servererror;
-
-
+    int targetSizeKB = 30 * 1024;
+    int quality = 100;
 /**
  * tackles with the result we get after scanning barcode as well as getting the image of barcode that we scanned and conversion of that image to base 64
  * */
 
-    private BarcodeCallback callback = new BarcodeCallback() {
+    private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
         public void barcodeResult(BarcodeResult result) {
             if(result.getText() == null || result.getText().equals(lastText)) {
                 return;
             }
-
             lastText = result.getText();
             barcodeView.setStatusText(result.getText());
             beepManager.playBeepSoundAndVibrate();
@@ -104,15 +96,70 @@ public class ScanActivity extends CaptureActivity {
             image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
       //      long imageSizeKB = byteArray.length / 1024;
-            base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            while (byteArray.length  > targetSizeKB && quality > 0) {
+                byteArrayOutputStream.reset();
+                image.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+                byteArray = byteArrayOutputStream.toByteArray();
+                quality -= 10;
 
+
+
+            }
+            base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            byte[] b64 = Base64.decode(base64Image,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(b64, 0, b64.length);
+            try {
+                saveBitmapToFile(context, bitmap);
+            } catch (Exception ex) {
+
+            }
+            int sizeInKB = b64.length / 1024;
+            trial();
         }
+
+
+
+
 
         @Override
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
+
     };
 
+    //
+    private static void saveBitmapToFile(Context context, Bitmap bitmap) throws IOException {
+        try {
+
+            File imageFile = createTempImageFile(context);
+
+            try (FileOutputStream outputStream = new FileOutputStream(imageFile)) {
+                // Compress the bitmap to JPEG format
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            }
+
+            // Notify the media scanner about the new file
+            android.media.MediaScannerConnection.scanFile(
+                    context,
+                    new String[]{imageFile.getAbsolutePath()},
+                    null,
+                    null);
+        }catch(Exception ex)
+
+        {
+            ex.printStackTrace();
+        }
+        // Optionally, you can delete the temporary file if you don't need it anymore
+        // imageFile.delete();
+    }
+
+    private static File createTempImageFile(Context context) throws IOException {
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        String imageFileName = "IMG_" + timeStamp;
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+    //
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,11 +168,9 @@ public class ScanActivity extends CaptureActivity {
         setContentView(R.layout.activity_test_scan);
         context = this;
         barcodeView = findViewById(R.id.barcode_scanner);
-        buttonslayout = findViewById(R.id.buttonsLayout);
         view = findViewById(R.id.centerHorizont);
         llinternet = findViewById(R.id.llinternet);
         pbloading = findViewById(R.id.pbLoading);
-        pbloading2 = findViewById(R.id.pbLoading2);
         servererror = findViewById(R.id.servererror);
         Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39);
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
@@ -133,85 +178,57 @@ public class ScanActivity extends CaptureActivity {
         barcodeView.decodeContinuous(callback);
         beepManager = new BeepManager(this);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         getLastLocation();
         init();
-
     }
-
     /**
      * initialize apiinterface
      * */
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
-
     }
-
     /**
      * get the location and access latitude and longitude co-ordinates
      * */
     @SuppressLint("MissingPermission")
     private void getLastLocation() {
-
         if (checkPermissions()) {
-
-
             if (isLocationEnabled()) {
-
-
-                mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        Location location = task.getResult();
-                        if (location == null) {
-                            requestNewLocationData();
-                        } else {
-
-                            latitude = String.valueOf(location.getLatitude());
-                            longitude = String.valueOf(location.getLongitude());
-                        }
+                mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+                    Location location = task.getResult();
+                    if (location == null) {
+                        requestNewLocationData();
+                    } else {
+                        latitude = String.valueOf(location.getLatitude());
+                        longitude = String.valueOf(location.getLongitude());
                     }
                 });
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.gps_location);
             builder.setMessage(R.string.please_turn_on_your_location);
-            builder.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-
-                }
+            builder.setPositiveButton(R.string.settings, (dialog, which) -> {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
             });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    finish();
-
-                }
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
+                dialog.cancel();
+                finish();
             });
             builder.show();
-
             }
         } else {
-
             requestPermissions();
         }
     }
 
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
-
-
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(5);
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
-
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
@@ -221,30 +238,26 @@ public class ScanActivity extends CaptureActivity {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             Location mLastLocation = locationResult.getLastLocation();
-
+            assert mLastLocation != null;
             latitude = String.valueOf(mLastLocation.getLatitude());
             longitude = String.valueOf(mLastLocation.getLongitude());
         }
     };
 
-
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED;
 
     }
-
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 "android.permission.ACCESS_COARSE_LOCATION",
                 "android.permission.ACCESS_FINE_LOCATION"},REQUEST_LOCATION);
     }
 
-
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
-
     @Override
     public void
     onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -256,7 +269,6 @@ public class ScanActivity extends CaptureActivity {
             }
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -274,85 +286,65 @@ public class ScanActivity extends CaptureActivity {
         barcodeView.pause();
     }
 /**
- * move to AssetListScreenActivity on the  click of conclude button
- * */
-    public void conclude(View view) {
-
-        Intent intent = new Intent(ScanActivity.this,AssetListScreenActivity.class);
-        startActivity(intent);
-    }
-/**
  * if ( lengh of result received after scanning the qr code is = 30)
  * {
  *     then show a popup with 4 options
  *     which ever option the user clicks on store the value of that function in Atag and call the function ServiceCall()
- *
+ * <p>
  *     if user clicks on AssetList option then call QRSerciceCall() function
  * }
  * */
-    public void scan(View view) {
 
-        if(lastText != null) {
+public void trial(){
+    if(lastText != null) {
 
-            if (lastText.length() == 30) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.choose_a_condition);
+        if (lastText.length() == 30) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.choose_a_condition);
 
-                String[] status = {getString(R.string.working_condition), getString(R.string.not_in_use), getString(R.string.scrap), getString(R.string.not_in_working_condition)};
-                builder.setItems(status, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0: {
-                                Atag = "Working Condition";
-                                break;
-                            }
-                            case 1: {
-                                Atag = "Not in use";
-                                break;
-                            }
-                            case 2: {
-                                Atag = "Scrap";
-                                break;
-                            }
-                            case 3: {
-                                Atag = "Not in Working Condition";
-                                break;
-                            }
-                        }
-
-                        serviceCall();
+            String[] status = {getString(R.string.working_condition), getString(R.string.not_in_use), getString(R.string.scrap), getString(R.string.not_in_working_condition)};
+            builder.setItems(status, (dialog, which) -> {
+                switch (which) {
+                    case 0: {
+                        Atag = "Working Condition";
+                        break;
                     }
-                });
-                builder.setPositiveButton(R.string.assetlist, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        qrservicecall();
+                    case 1: {
+                        Atag = "Not in use";
+                        break;
                     }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        finish();
-
+                    case 2: {
+                        Atag = "Scrap";
+                        break;
                     }
-                });
+                    case 3: {
+                        Atag = "Not in Working Condition";
+                        break;
+                    }
+                }
+
+                serviceCall();
+            });
+            builder.setPositiveButton(R.string.assetlist, (dialog, which) -> qrservicecall());
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
+                dialog.cancel();
+                finish();
+
+            });
 
 
-                AlertDialog dialog = builder.create();
-                dialog.show();
+            AlertDialog dialog = builder.create();
+            dialog.show();
 
-            } else {
+        } else {
 
-                Toast.makeText(context, R.string.invalid_qr, LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_qr, LENGTH_SHORT).show();
 
-            }
-        }else{
-            Toast.makeText(context, R.string.please_scan_qr_code_first,LENGTH_SHORT).show();
         }
+    }else{
+        Toast.makeText(context, R.string.please_scan_qr_code_first,LENGTH_SHORT).show();
     }
+}
 
     /**
      * takes bearer token and the string retrived after scanning the qr as params and returns customer information as response
@@ -367,13 +359,14 @@ public class ScanActivity extends CaptureActivity {
                 Call<QRResponseModel> call = apiInterface.qrdetails(params,"Bearer " + token);
                 call.enqueue(new Callback<QRResponseModel>() {
                     @Override
-                    public void onResponse(Call<QRResponseModel> call, retrofit2.Response<QRResponseModel> response) {
+                    public void onResponse(@NonNull Call<QRResponseModel> call, @NonNull retrofit2.Response<QRResponseModel> response) {
                         QRResponseModel qrResponseModel = response.body();
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.GONE);
                         if (qrResponseModel != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(ScanActivity.this);
                             builder.setTitle(getString(R.string.customer_information));
                             builder.setMessage(qrResponseModel.data.customerInfo);
+                            builder.setPositiveButton(getString(R.string.OK), (dialog, which) -> finish());
                             builder.show();
                         } else
                         {
@@ -381,7 +374,7 @@ public class ScanActivity extends CaptureActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<QRResponseModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<QRResponseModel> call, @NonNull Throwable t) {
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.VISIBLE);
 
                     }
@@ -427,7 +420,7 @@ public class ScanActivity extends CaptureActivity {
                 Call<ImeiObjectModel> call = apiInterface.Final_request(params,"Bearer "+token);
                 call.enqueue(new Callback<ImeiObjectModel>() {
                     @Override
-                    public void onResponse(Call<ImeiObjectModel> call, retrofit2.Response<ImeiObjectModel> response) {
+                    public void onResponse(@NonNull Call<ImeiObjectModel> call, @NonNull retrofit2.Response<ImeiObjectModel> response) {
                         ImeiObjectModel imeiresponse = response.body();
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.GONE);
 
@@ -435,9 +428,10 @@ public class ScanActivity extends CaptureActivity {
 
                             if(imeiresponse.data == 0 ){
                                 Toast.makeText(ScanActivity.this, R.string.unsuccessful, LENGTH_SHORT).show();
+                                finish();
                             } else if (imeiresponse.data == 1) {
                                 Toast.makeText(ScanActivity.this, R.string.successful, LENGTH_SHORT).show();
-
+                                finish();
                             }
                         } else
                         {
@@ -445,7 +439,7 @@ public class ScanActivity extends CaptureActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<ImeiObjectModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ImeiObjectModel> call, @NonNull Throwable t) {
 
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.VISIBLE);
 
@@ -472,8 +466,6 @@ public class ScanActivity extends CaptureActivity {
             e.printStackTrace();
         }
     }
-
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.CompletedAssetList">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dimen10dp"
+            android:layout_marginTop="@dimen/dimen10dp"
+            android:layout_marginBottom="@dimen/dimen10dp"
+            android:background="@drawable/textview_resource_file">
+    <Spinner
+        android:id="@+id/spinner3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/snanned"
+        android:padding="@dimen/dimen10dp"
+
+         />
+        </RelativeLayout>
+    <!-- TODO: Update blank fragment layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAssetList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="ifContentScrolls"
+        android:visibility="visible"
+        android:layout_weight="1">
+
+    </androidx.recyclerview.widget.RecyclerView>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
+            android:paddingLeft="8dp"
+            android:visibility="gone"
+            android:paddingRight="8dp"
+            />
+        </LinearLayout>
+    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/load"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:animateLayoutChanges="true"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                android:layout_width="@dimen/dimen30dp"
+                android:layout_height="@dimen/dimen30dp"
+                android:layout_centerInParent="true"
+                android:elevation="@dimen/dimen10dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@android:color/black"
+                android:indeterminateTintMode="src_atop" />
+
+            <TextView
+                android:id="@+id/tvPleaseWait"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/dimen15dp"
+                android:text="@string/getting_asset_list"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/dimen18sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llinternet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dimennegative40dp"
+            android:gravity="center"
+            android:background="@color/white"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="@dimen/dimen200dp"
+                android:layout_height="@dimen/dimen200dp"
+                android:paddingLeft="@dimen/dimen10dp"
+                android:paddingRight="@dimen/dimen10dp"
+                android:layout_marginBottom="@dimen/dimen10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/wireless" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_internet_connection"
+                android:textSize="@dimen/dimen25sp"
+                android:textStyle="bold"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/dimen20dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/servererror"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/dimennegative40dp"
+            android:gravity="center"
+            android:background="@color/white"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/dimen200dp"
+                android:paddingLeft="@dimen/dimen10dp"
+                android:paddingRight="@dimen/dimen10dp"
+                android:layout_marginBottom="@dimen/dimen10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/error" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/server_error_msg"
+                android:textSize="@dimen/dimen25sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>

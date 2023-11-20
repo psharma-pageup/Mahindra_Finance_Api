@@ -3,18 +3,23 @@ package com.app.mahindrafinancemfact.activities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.app.mahindrafinancemfact.R;
 import com.app.mahindrafinancemfact.databinding.ActivityRegistrationBinding;
-import com.app.mahindrafinancemfact.utility.ApiClient;
-import com.app.mahindrafinancemfact.utility.UtilityMethods;
 import com.app.mahindrafinancemfact.models.RegistrationModel;
+import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
+import com.app.mahindrafinancemfact.utility.UtilityMethods;
+
 import java.util.HashMap;
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -43,8 +48,6 @@ public class Registration extends AppCompatActivity {
         try {
             context = this;
             apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,23 +57,14 @@ public class Registration extends AppCompatActivity {
      * getting the imei number from device
      * */
     public void getImei(){
+        SharedPreferences imeinumber = getSharedPreferences("IMEI", MODE_PRIVATE);
+        String imei = imeinumber.getString("imei", "");
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-            activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
-                    context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID));
-
-
-
+            activityRegistrationBinding.tvImeiOne.setText(imei);
         } else if (manager.getPhoneCount() == 2) {
-
-            activityRegistrationBinding.tvImeiOne.setText(Settings.Secure.getString(
-                    context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID));
-            activityRegistrationBinding.tvImeiTwo.setText(Settings.Secure.getString(
-                    context.getContentResolver(),
-                    Settings.Secure.ANDROID_ID));
-
+            activityRegistrationBinding.tvImeiOne.setText(imei);
+            activityRegistrationBinding.tvImeiTwo.setText(imei);
         }
     }
 
@@ -78,18 +72,12 @@ public class Registration extends AppCompatActivity {
      * calling the serviceCall() function on the click of submit button
      * */
     public void clickListener(){
-        activityRegistrationBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                isAllFieldsChecked = checkAllFields();
-                if(isAllFieldsChecked){
-                    serviceCall();
-
-                }
-
-
+        activityRegistrationBinding.btnSubmit.setOnClickListener(v -> {
+            isAllFieldsChecked = checkAllFields();
+            if(isAllFieldsChecked){
+                serviceCall();
             }
+
         });
     }
 
@@ -112,14 +100,13 @@ public class Registration extends AppCompatActivity {
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE, View.VISIBLE,View.GONE);
                 HashMap<String, String> params = new HashMap<>();
-                params.put("sapCode", activityRegistrationBinding.etSapCode.getText().toString());
+                params.put("sapCode", Objects.requireNonNull(activityRegistrationBinding.etSapCode.getText()).toString());
                 params.put("imeI1", activityRegistrationBinding.tvImeiOne.getText().toString());
                 params.put("imeI2", activityRegistrationBinding.tvImeiTwo.getText().toString());
-
                 Call<RegistrationModel> call = apiInterface.Register_Service(params);
                 call.enqueue(new Callback<RegistrationModel>() {
                     @Override
-                    public void onResponse(Call<RegistrationModel> call, retrofit2.Response<RegistrationModel> response) {
+                    public void onResponse(@NonNull Call<RegistrationModel> call, @NonNull retrofit2.Response<RegistrationModel> response) {
                         RegistrationModel registerresponse = response.body();
                         showMsgView(View.GONE, View.GONE,View.GONE);
                         if (registerresponse != null) {
@@ -143,14 +130,13 @@ public class Registration extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<RegistrationModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<RegistrationModel> call, @NonNull Throwable t) {
 
                         showMsgView(View.GONE, View.GONE,View.VISIBLE);
                     }
                 });
             } else {
                 showMsgView(View.VISIBLE, View.GONE,View.GONE);
-
             }
         }
         catch (Exception e) {

@@ -7,33 +7,35 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.app.mahindrafinancemfact.R;
+import com.app.mahindrafinancemfact.adaptors.ViewPagerAdapter;
 import com.app.mahindrafinancemfact.databinding.ActivityAssetListScreenBinding;
 import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.UtilityMethods;
 import com.app.mahindrafinancemfact.adaptors.AssetListAdaptor;
 import com.app.mahindrafinancemfact.models.AssetObjectResponseModel;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class AssetListScreenActivity extends AppCompatActivity {
     private ActivityAssetListScreenBinding activityAssetListScreenBinding;
-    ArrayList assetList = new ArrayList<>();
+
     ApiInterface apiInterface;
     Context context;
     String s1;
     String s2;
-
+    int pageIndex = 1;
+    String completed;
+    String pending;
+    String total;
+    int pageSize = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,55 +48,53 @@ public class AssetListScreenActivity extends AppCompatActivity {
         SharedPreferences ai = getSharedPreferences("AID",MODE_PRIVATE);
         s2 = ai.getString("aid","");
         init();
+        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        activityAssetListScreenBinding.viewPager.setOffscreenPageLimit(4);
+        activityAssetListScreenBinding.viewPager.setAdapter(pagerAdapter);
+        activityAssetListScreenBinding.tabLayout.setupWithViewPager(activityAssetListScreenBinding.viewPager);
+
     }
     /** Initialize apiinterface*/
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
         setToolbar();
+        SharedPreferences sh = getSharedPreferences("BRANCHLOC", MODE_PRIVATE);
+        String loc = sh.getString("loc", "");
         activityAssetListScreenBinding.tvAuditId.setText(s2);
-        getAssetList();
-        activityAssetListScreenBinding.btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        activityAssetListScreenBinding.tvloc.setText(loc);
+        getAssetList(pageIndex,pageSize);
+        activityAssetListScreenBinding.btnBack.setOnClickListener(v -> finish());
 
-        activityAssetListScreenBinding.btnAuditDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences =getSharedPreferences("SAPCODE",Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.apply();
+        activityAssetListScreenBinding.btnAuditDone.setOnClickListener(v -> {
+            SharedPreferences preferences =getSharedPreferences("SAPCODE",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.clear();
+            editor.apply();
 
-                SharedPreferences pref =getSharedPreferences("AID",Context.MODE_PRIVATE);
-                SharedPreferences.Editor edite = pref.edit();
-                edite.clear();
-                edite.apply();
-                finishAffinity();
+            SharedPreferences pref =getSharedPreferences("AID",Context.MODE_PRIVATE);
+            SharedPreferences.Editor edite = pref.edit();
+            edite.clear();
+            edite.apply();
+            finishAffinity();
 
-                Intent intent = new Intent(AssetListScreenActivity.this, SplashScreen.class);
-                startActivity(intent);
-            }
+            Intent intent = new Intent(AssetListScreenActivity.this, SplashScreen.class);
+            startActivity(intent);
         });
-        activityAssetListScreenBinding.btnRetry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getAssetList();
-            }
+        activityAssetListScreenBinding.qr.setOnClickListener(v -> {
+            Intent intent = new Intent(AssetListScreenActivity.this,ScanActivity.class);
+            startActivity(intent);
         });
+        activityAssetListScreenBinding.btnRetry.setOnClickListener(v -> getAssetList(pageIndex,pageSize));
     }
     /**setup Toolbar*/
     private void setToolbar() {
         setSupportActionBar(activityAssetListScreenBinding.toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         activityAssetListScreenBinding.toolbar.setNavigationIcon(R.drawable.back_button);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
             onBackPressed();
             return true;
         }
@@ -102,60 +102,56 @@ public class AssetListScreenActivity extends AppCompatActivity {
     }
 
     /** this function passes sapcode and audit id as params and we receive asset list and the count of total,completed and pending assets in response*/
-    private void getAssetList() {
+    private void getAssetList(int pageIndex, int pageSize) {
         try {
 
             if (UtilityMethods.isConnectingToInternet(context)) {
-                showMsgView(View.GONE,View.VISIBLE,View.GONE);
+              //  showMsgView(View.VISIBLE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("empCode", s1);
                 params.put("aid", s2);
+                params.put("index", String.valueOf(pageIndex));
+                params.put("records", String.valueOf(pageSize));
                 SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = tok.getString("token", "");
                 Call<AssetObjectResponseModel> call = apiInterface.Asset_request(params,"Bearer " + token);
                 call.enqueue(new Callback<AssetObjectResponseModel>() {
                     @Override
-                    public void onResponse(Call<AssetObjectResponseModel> call, retrofit2.Response<AssetObjectResponseModel> response) {
+                    public void onResponse(@NonNull Call<AssetObjectResponseModel> call, @NonNull retrofit2.Response<AssetObjectResponseModel> response) {
                         AssetObjectResponseModel responseType = response.body();
-                        showMsgView(View.GONE,View.GONE,View.GONE);
+                    //    showMsgView(View.GONE);
 
                         if (responseType != null) {
+                            total=String.valueOf(responseType.data.total);
+                            completed = String.valueOf(responseType.data.completed);
+                            pending = String.valueOf(responseType.data.pending);
+                            activityAssetListScreenBinding.tabLayout.getTabAt(0).setText("Completed" + "(" + completed + ")" );
+                            activityAssetListScreenBinding.tabLayout.getTabAt(1).setText("Pending" + "(" + pending + ")" );
+                            activityAssetListScreenBinding.tabLayout.getTabAt(2).setText("Total" + "(" + total + ")" );
 
-                            assetList = responseType.data.assetlist;
-                            activityAssetListScreenBinding.total.setText(String.valueOf(responseType.data.total));
-                            activityAssetListScreenBinding.completed.setText(String.valueOf(responseType.data.completed));
-                            activityAssetListScreenBinding.pending.setText(String.valueOf(responseType.data.pending));
-                            AssetListAdaptor adapter = new AssetListAdaptor(context,assetList);
-                            adapter.notifyItemInserted(assetList.size() - 1);
-                            activityAssetListScreenBinding.rvAssetList.scrollToPosition(assetList.size() - 1);
-                            activityAssetListScreenBinding.rvAssetList.setHasFixedSize(true);
-                            activityAssetListScreenBinding.rvAssetList.setLayoutManager(new LinearLayoutManager(context));
-                            activityAssetListScreenBinding.rvAssetList.setAdapter(adapter);
                         } else {
-                            showMsgView(View.GONE,View.GONE,View.VISIBLE);
+                        //    showMsgView(View.GONE);
                         }
                     }
                     @Override
-                    public void onFailure(Call<AssetObjectResponseModel> call, Throwable t) {
-                        showMsgView(View.GONE,View.GONE,View.VISIBLE);
+                    public void onFailure(@NonNull Call<AssetObjectResponseModel> call, @NonNull Throwable t) {
+                     //   showMsgView(View.GONE);
                     }
                 });
             } else {
-                showMsgView(View.VISIBLE,View.GONE, View.GONE);
+               // showMsgView(View.GONE);
 
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    void showMsgView(int containerVisibility, int loadingVisibility, int srvr) {
-        try {
-          activityAssetListScreenBinding.llinternet.setVisibility(containerVisibility);
-          activityAssetListScreenBinding.load.setVisibility(loadingVisibility);
-          activityAssetListScreenBinding.servererror.setVisibility(srvr);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    void showMsgView(int loadingVisibility) {
+//        try {
+//          activityAssetListScreenBinding.load.setVisibility(loadingVisibility);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }

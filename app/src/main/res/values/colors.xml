@@ -16,4 +16,6 @@
     <color name="colorcard">#e8edea</color>
     <color name="toolbar">#212121</color>
     <color name="lightred">#EA3030</color>
+    <color name="diabled">#d0d0d0</color>
+    <color name="disable">#F3ECEC</color>
 </resources>

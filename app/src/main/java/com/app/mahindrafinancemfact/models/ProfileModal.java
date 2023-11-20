@@ -10,4 +10,19 @@ public class ProfileModal implements Serializable {
 
     @SerializedName("empCode")
     public String empCode;
+
+    @SerializedName("branch")
+    public String branch;
+
+    @SerializedName("company")
+    public String company;
+
+    @SerializedName("dept")
+    public String dept;
+
+    @SerializedName("mail")
+    public String mail;
+
+    @SerializedName("mobile")
+    public String mobile;
 }

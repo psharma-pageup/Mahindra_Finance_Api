@@ -85,12 +85,7 @@ public class MessageActivity extends AppCompatActivity {
             } else if (imeiResponse.equals(5)) {
                 activityMessageBinding.tvMessage.setText(R.string.account_has_been_locked_due_to_inactive_employee);
                 activityMessageBinding.btnMessage.setText(R.string.exit_application);
-                activityMessageBinding.btnMessage.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finishAffinity();
-                    }
-                });
+                activityMessageBinding.btnMessage.setOnClickListener(v -> finishAffinity());
             }
         }else{
             Toast.makeText(context, R.string.imresponse_is_null, Toast.LENGTH_SHORT).show();
@@ -101,15 +96,16 @@ public class MessageActivity extends AppCompatActivity {
  * getting the imei number from the device
  * */
     public void getImei(){
+        SharedPreferences imeinumber = getSharedPreferences("IMEI", MODE_PRIVATE);
+        String imei = imeinumber.getString("imei", "");
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-            imei1 = manager.getDeviceId();
+            imei1 = imei;
             sendImei();
 
         } else if (manager.getPhoneCount() == 2) {
-
-            imei1 = manager.getDeviceId(0);
-            imei2 = manager.getDeviceId(1);
+            imei1 = imei;
+            imei2 = imei;
             sendImei();
 
         }

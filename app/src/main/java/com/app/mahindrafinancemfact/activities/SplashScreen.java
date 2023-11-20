@@ -4,17 +4,8 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
-
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,19 +16,24 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+
 import com.app.mahindrafinancemfact.R;
 import com.app.mahindrafinancemfact.databinding.ActivitySplashScreenBinding;
-import com.app.mahindrafinancemfact.utility.ApiClient;
-import com.app.mahindrafinancemfact.utility.UtilityMethods;
-
 import com.app.mahindrafinancemfact.models.ImeiModel;
 import com.app.mahindrafinancemfact.models.QRResponseModel;
+import com.app.mahindrafinancemfact.utility.ApiClient;
 import com.app.mahindrafinancemfact.utility.ApiInterface;
+import com.app.mahindrafinancemfact.utility.UtilityMethods;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -51,17 +47,8 @@ import retrofit2.Callback;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
+@SuppressLint("CustomSplashScreen")
 public class SplashScreen extends AppCompatActivity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -79,7 +66,6 @@ public class SplashScreen extends AppCompatActivity {
     String imei2;
     String qrResponse;
     private boolean isClickable = true;
-    private final long CLICK_DELAY = 1000;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -102,46 +88,15 @@ public class SplashScreen extends AppCompatActivity {
         }
     };
     // private View mControlsView;
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
+    private final Runnable mShowPart2Runnable = () -> {
+        // Delayed display of UI elements
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
         }
     };
     private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            switch (motionEvent.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (AUTO_HIDE) {
-                        delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    view.performClick();
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
-    };
+    private final Runnable mHideRunnable = this::hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,12 +107,7 @@ public class SplashScreen extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mVisible = true;
         mContentView = binding.fullscreenContent;
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+        mContentView.setOnClickListener(view -> toggle());
         init();
         setView();
     }
@@ -185,6 +135,7 @@ public class SplashScreen extends AppCompatActivity {
     }
     public void onClick(View v) {
         int id = v.getId();
+        long CLICK_DELAY = 1000;
         if (id == R.id.btnGettingStarted) {
             if (isClickable) {
                 getImei();
@@ -192,12 +143,7 @@ public class SplashScreen extends AppCompatActivity {
                 isClickable = false;
 
                 Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        isClickable = true;
-                    }
-                }, CLICK_DELAY);
+                handler.postDelayed(() -> isClickable = true, CLICK_DELAY);
             }
 
         } else if (id == R.id.btnQrDetails) {
@@ -206,12 +152,7 @@ public class SplashScreen extends AppCompatActivity {
                 isClickable = false;
 
                 Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        isClickable = true;
-                    }
-                }, CLICK_DELAY);
+                handler.postDelayed(() -> isClickable = true, CLICK_DELAY);
             }
 
         }
@@ -254,7 +195,7 @@ public class SplashScreen extends AppCompatActivity {
                 Call<QRResponseModel> call = apiInterface.qrdetails(params,"Bearer " + token);
                 call.enqueue(new Callback<QRResponseModel>() {
                     @Override
-                    public void onResponse(Call<QRResponseModel> call, retrofit2.Response<QRResponseModel> response) {
+                    public void onResponse(@NonNull Call<QRResponseModel> call, @NonNull retrofit2.Response<QRResponseModel> response) {
                         QRResponseModel qrResponseModel = response.body();
                         if (qrResponseModel != null) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
@@ -267,7 +208,7 @@ public class SplashScreen extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<QRResponseModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<QRResponseModel> call, @NonNull Throwable t) {
 
                         showMsgView(View.GONE,View.GONE,View.VISIBLE);
                     }
@@ -283,6 +224,7 @@ public class SplashScreen extends AppCompatActivity {
         }
 
     }
+ @SuppressLint("HardwareIds")
  public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
@@ -299,6 +241,10 @@ public class SplashScreen extends AppCompatActivity {
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
         }
+     SharedPreferences sharedPreferences = getSharedPreferences("IMEI", MODE_PRIVATE);
+     SharedPreferences.Editor myEdit = sharedPreferences.edit();
+     myEdit.putString("imei", imei1);
+     myEdit.apply();
     }
     public void sendImei(){
     serviceCall();
@@ -314,7 +260,7 @@ public class SplashScreen extends AppCompatActivity {
                 Call<ImeiModel> call = apiInterface.imeisend(params);
                 call.enqueue(new Callback<ImeiModel>() {
                     @Override
-                    public void onResponse(Call<ImeiModel> call, retrofit2.Response<ImeiModel> response) {
+                    public void onResponse(@NonNull Call<ImeiModel> call, @NonNull retrofit2.Response<ImeiModel> response) {
                         ImeiModel imeiresponse = response.body();
                         binding.pbLoading.setVisibility(View.GONE);
 
@@ -342,7 +288,7 @@ public class SplashScreen extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<ImeiModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ImeiModel> call, @NonNull Throwable t) {
 
                         showMsgView(View.VISIBLE,View.GONE,View.VISIBLE);
                     }
@@ -356,105 +302,73 @@ public class SplashScreen extends AppCompatActivity {
         }
 
     }
-
-
 private void checkPermission() {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        permissionStatus = getSharedPreferences("permissionStatus", this.MODE_PRIVATE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(getString(R.string.grant_permission));
-                builder.setMessage(getString(R.string.permission_camera));
-                builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                    , Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE}, PERMISSION_CALLBACK_CONSTANT);
-                        }
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            } else if (permissionStatus.getBoolean(Manifest.permission.CAMERA, false)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(getString(R.string.grant_permission));
-                builder.setMessage(getString(R.string.permission_camera));
-                builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            } else {
-                //just request the permission
+    permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.grant_permission));
+            builder.setMessage(getString(R.string.permission_camera));
+            builder.setPositiveButton(R.string.grant, (dialog, which) -> {
+                dialog.cancel();
                 requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
                         , Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE}, PERMISSION_CALLBACK_CONSTANT);
-            }
-            SharedPreferences.Editor editor = permissionStatus.edit();
-            editor.putBoolean(Manifest.permission.CAMERA, true);
-            editor.commit();
+            });
+            builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+            builder.show();
+        } else if (permissionStatus.getBoolean(Manifest.permission.CAMERA, false)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.grant_permission));
+            builder.setMessage(getString(R.string.permission_camera));
+            builder.setPositiveButton(R.string.grant, (dialog, which) -> {
+                dialog.cancel();
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+            });
+            builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
+            builder.show();
         } else {
-
+            //just request the permission
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    , Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE}, PERMISSION_CALLBACK_CONSTANT);
         }
+        SharedPreferences.Editor editor = permissionStatus.edit();
+        editor.putBoolean(Manifest.permission.CAMERA, true);
+        editor.apply();
     }
 }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        permissionStatus = getSharedPreferences("permissionStatus", this.MODE_PRIVATE);
+        permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
         if (requestCode == PERMISSION_CALLBACK_CONSTANT) {
-            boolean allgranted = false;
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    allgranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
                 } else {
-                    allgranted = false;
                     break;
                 }
             }
-
-
         }
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-
-        delayedHide(100);
+        delayedHide();
     }
-
     private void toggle() {
         if (mVisible) {
             hide();
@@ -462,7 +376,6 @@ private void checkPermission() {
             show();
         }
     }
-
     private void hide() {
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
@@ -496,9 +409,9 @@ private void checkPermission() {
      * Schedules a call to hide() in delay milliseconds, canceling any
      * previously scheduled calls.
      */
-    private void delayedHide(int delayMillis) {
+    private void delayedHide() {
         mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.postDelayed(mHideRunnable, 100);
     }
 
     void showMsgView(int containerVisibility, int nointernetvisibillity, int srvrerr) {

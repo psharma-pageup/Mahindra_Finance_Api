@@ -21,24 +21,26 @@
     <LinearLayout
         android:id="@+id/llLogo"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dimen0dp"
         android:layout_weight="0.5"
         android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="350dp"
-            android:layout_height="100dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginTop="20dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/logo"
+            android:src="@drawable/logo9"
              />
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_width="@dimen/dimen200dp"
+            android:layout_height="@dimen/dimen50dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginTop="-30dp"
             android:scaleType="fitCenter"
             android:src="@drawable/logo2"
             />
@@ -50,7 +52,7 @@
     <LinearLayout
         android:id="@+id/llButtonContainer"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/dimen0dp"
         android:layout_weight="0.3"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
@@ -66,14 +68,14 @@
             android:weightSum="1">
 
             <RelativeLayout
-                android:layout_width="0dp"
+                android:layout_width="@dimen/dimen0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnGettingStarted"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="@dimen/dimen50dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/rounded_button"
                     android:text="@string/getting_started_btn_text"
@@ -82,10 +84,10 @@
 
                 <ProgressBar
                     android:id="@+id/pbLoading"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/dimen24dp"
+                    android:layout_height="@dimen/dimen24dp"
                     android:layout_centerInParent="true"
-                    android:elevation="10dp"
+                    android:elevation="@dimen/dimen10dp"
                     android:indeterminate="true"
                     android:indeterminateTint="@android:color/white"
                     android:indeterminateTintMode="src_atop"
@@ -95,20 +97,20 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/dimen0dp"
             android:layout_weight="0.4"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="1">
             <RelativeLayout
-                android:layout_width="0dp"
+                android:layout_width="@dimen/dimen0dp"
                 android:layout_weight="0.7"
                 android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnQrDetails"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="@dimen/dimen50dp"
                     android:layout_centerInParent="true"
                     android:background="@drawable/rounded_button"
                     android:text="@string/qr_details_btn_text"
@@ -120,11 +122,11 @@
 
     </LinearLayout>
     <ImageView
-        android:layout_width="150dp"
-        android:layout_height="25dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="@dimen/dimen150dp"
+        android:layout_height="@dimen/dimen25dp"
+        android:paddingLeft="@dimen/dimen10dp"
+        android:paddingRight="@dimen/dimen10dp"
+        android:layout_marginBottom="@dimen/dimen20dp"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
         android:src="@drawable/pageuplogo" />
@@ -135,23 +137,24 @@
         android:id="@+id/llinternet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:visibility="gone"
-        android:layout_marginTop="-40dp"
+        android:layout_marginTop="@dimen/dimennegative40dp"
         android:gravity="center"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_width="@dimen/dimen200dp"
+            android:layout_height="@dimen/dimen200dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginBottom="@dimen/dimen10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/nointernet" />
+            android:src="@drawable/wireless" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_internet_connection"
-            android:textSize="30sp"
+            android:textSize="@dimen/dimen25sp"
             android:textStyle="bold"/>
     </LinearLayout>
     <LinearLayout
@@ -159,22 +162,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:layout_marginTop="-40dp"
+        android:layout_marginTop="@dimen/dimennegative40dp"
         android:gravity="center"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="@dimen/dimen200dp"
+            android:layout_height="@dimen/dimen200dp"
+            android:paddingLeft="@dimen/dimen10dp"
+            android:paddingRight="@dimen/dimen10dp"
+            android:layout_marginBottom="@dimen/dimen5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/error" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Server Error"
-            android:textSize="25sp"
+            android:textSize="@dimen/dimen25dp"
             android:textStyle="bold"/>
     </LinearLayout>
 </LinearLayout>

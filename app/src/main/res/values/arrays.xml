@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="status">
+    <item>Available</item>
+    <item>Not Available</item>
+</string-array>
+    <string-array name="snanned">
+        <item>All</item>
+        <item>Scanned</item>
+        <item>Manual</item>
+    </string-array>
+    <string-array name="dest">
+        <item>Select Destination</item>
+    </string-array>
+</resources>

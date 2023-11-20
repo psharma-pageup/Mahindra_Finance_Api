@@ -19,14 +19,14 @@
     <string name="next_btn_text"><![CDATA[Next ->]]></string>
     <string name="app_under_maintenance_msg">Application under maintenance</string>
     <string name="exit_btn_text">Exit Application</string>
-    <string name="branch_list_title">Branch List</string>
+    <string name="branch_list_title">Assign Branch List</string>
     <string name="please_wait_branch_list_getting_msg">Getting branch list</string>
     <string name="retry_btn_text">Retry</string>
     <string name="no_net_msg">Please check your net connection.</string>
     <string name="audit_progress_title">Audit in Progress</string>
     <string name="audit_id">Audit ID</string>
     <string name="getting_audit_id_msg">Please wait getting your Audit ID</string>
-    <string name="location">Location</string>
+    <string name="location">Location:</string>
     <string name="continue_btn_text">Continue</string>
     <string name="scan_qr_code_heading">Scan Code</string>
     <string name="conclude_btn_text">Conclude</string>
@@ -59,7 +59,7 @@
     <string name="getting_asset_list">Getting Asset List</string>
     <string name="volume_up_to_flash_on">Volume up to flash on</string>
     <string name="invalid_qr_code">Invalid QR Code</string>
-    <string name="customer_information">Customer Information</string>
+    <string name="customer_information">Information</string>
     <string name="gps_location">GPS Location</string>
     <string name="please_turn_on_your_location">Please Turn On Your Location</string>
     <string name="settings">SETTINGS</string>
@@ -68,7 +68,7 @@
     <string name="not_in_use">Not in use</string>
     <string name="scrap">Scrap</string>
     <string name="not_in_working_condition">Not in Working Condition</string>
-    <string name="assetlist">AssetList</string>
+    <string name="assetlist">AssetInfo</string>
     <string name="invalid_qr">Invalid QR</string>
     <string name="please_scan_qr_code_first">Please Scan QR Code first</string>
     <string name="unsuccessful">Unsuccessful</string>
@@ -84,6 +84,29 @@
     <string name="registration_successful">Registration successful</string>
     <string name="registration_failed">Registration Failed</string>
     <string name="onfailure">onFailure</string>
+    <string name="OK">OK</string>
+    <string name="logout">Logout</string>
+    <string name="logoutmsg">Are You Sure You Want to Logout ?</string>
+    <string name="no">NO</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="form">Manual Audit</string>
+    <string name="asset_code">Asset Code</string>
+    <string name="serial">Serial</string>
+    <string name="details">Details</string>
+    <string name="status">Status</string>
+    <string name="tag">Tag</string>
+    <string name="verification_remarks">Verification Remarks</string>
+    <string name="receipt_no">Receipt No.</string>
+    <string name="sscat">SSCAT</string>
+    <string name="asset_owner">Asset Owner</string>
+    <string name="destination">Destination</string>
+    <string name="name">Name</string>
+    <string name="branch">Branch</string>
+    <string name="company">Company</string>
+    <string name="department">Department</string>
+    <string name="mail">Mail</string>
+    <string name="contact">Contact</string>
 
 
 </resources>
