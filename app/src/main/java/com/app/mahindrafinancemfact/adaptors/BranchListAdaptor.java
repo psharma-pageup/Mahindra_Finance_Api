@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.mahindrafinancemfact.activities.AssetListScreenActivity;
 import com.app.mahindrafinancemfact.databinding.BranchListItemBinding;
 import com.app.mahindrafinancemfact.models.BranchModel;
+import com.app.mahindrafinancemfact.utility.UtilityMethods;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +34,9 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
     @NonNull
     @Override
     public BranchListAdaptor.branchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         com.app.mahindrafinancemfact.databinding.BranchListItemBinding branchListItemBinding = BranchListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-
         return new BranchListAdaptor.branchViewHolder(branchListItemBinding);
     }
-
     @Override
     public void onBindViewHolder(@NonNull BranchListAdaptor.branchViewHolder holder, @SuppressLint("RecyclerView") int position) {
         this.position = position;
@@ -47,21 +46,24 @@ public class BranchListAdaptor extends RecyclerView.Adapter<BranchListAdaptor.br
     }
     private void setOnClickListener(branchViewHolder holder, int position) {
         holder.branchListItemBinding.llMain.setOnClickListener (v -> {
-            Intent intent = new Intent (context, AssetListScreenActivity.class);
-            aid = branchList.get(position).aid;
-            branch = branchList.get(position).branch;
-            SharedPreferences sharedPreferences = context.getSharedPreferences("AID", MODE_PRIVATE);
-            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-            myEdit.putString("aid", aid);
-            myEdit.apply();
-            SharedPreferences sharedPref = context.getSharedPreferences("BRANCHLOC", MODE_PRIVATE);
-            SharedPreferences.Editor Edit = sharedPref.edit();
-            Edit.putString("loc", branch);
-            Edit.apply();
-            context.startActivity (intent);
+            if(UtilityMethods.isConnectingToInternet(context)){
+                Intent intent = new Intent (context, AssetListScreenActivity.class);
+                aid = branchList.get(position).aid;
+                branch = branchList.get(position).branch;
+                SharedPreferences sharedPreferences = context.getSharedPreferences("AID", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("aid", aid);
+                myEdit.apply();
+                SharedPreferences sharedPref = context.getSharedPreferences("BRANCHLOC", MODE_PRIVATE);
+                SharedPreferences.Editor Edit = sharedPref.edit();
+                Edit.putString("loc", branch);
+                Edit.apply();
+                context.startActivity (intent);
+            }else {
+                Toast.makeText(context, "PLEASE CHECK YOUR INTERNET CONNECTION", Toast.LENGTH_SHORT).show();
+            }
         });
     }
-
     @Override
     public int getItemCount() {
         return branchList.size ();

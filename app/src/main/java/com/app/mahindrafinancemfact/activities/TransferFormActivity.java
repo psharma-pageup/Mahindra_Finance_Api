@@ -38,7 +38,6 @@ public class TransferFormActivity extends AppCompatActivity {
     Context context;
     ApiInterface apiInterface;
     ArrayList<AssetBranchListModel> entries;
-
     String selectedValue3;
     List<CharSequence> drop = new ArrayList<>();
     @Override
@@ -49,20 +48,27 @@ public class TransferFormActivity extends AppCompatActivity {
         context = this;
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
         setToolbar();
-//        spinner();
         spinnerasset();
         SharedPreferences stat = getSharedPreferences("BRANCHLOC", MODE_PRIVATE);
         String status = stat.getString("loc", "");
         activityTransferFormBinding.stat.setText(status);
         destination();
+        clickListener();
+    }
 
+    public void clickListener(){
+        activityTransferFormBinding.btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                destination();
+            }
+        });
     }
 
     private void destination() {
         SharedPreferences ai = getSharedPreferences("AID",MODE_PRIVATE);
         aid = ai.getString("aid","");
         try {
-
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE,View.GONE);
                 String params = aid;
@@ -73,24 +79,19 @@ public class TransferFormActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<AssetBranchListResponseModel> call, @NonNull retrofit2.Response<AssetBranchListResponseModel> response) {
                         AssetBranchListResponseModel responseType = response.body();
-
                         if (responseType != null) {
-
                             for(int i = 0; i< responseType.assetbranch.size();i++) {
                                 entries = responseType.assetbranch;
                                 drop.addAll(Collections.singleton(entries.get(i).branch));
                             }
                             ArrayAdapter adapter = new ArrayAdapter(context, simple_spinner_item, drop);
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
                             activityTransferFormBinding.spinner3.setAdapter(adapter);
                             activityTransferFormBinding.spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                     selectedValue3 = (String) parentView.getItemAtPosition(position);
-
                                 }
-
                                 @Override
                                 public void onNothingSelected(AdapterView<?> parentView) {
                                 }
@@ -118,63 +119,19 @@ public class TransferFormActivity extends AppCompatActivity {
                 R.array.status,
                 simple_spinner_item
         );
-//        Drawable customSpinnerBackground = getResources().getDrawable(R.drawable.textview_resource_file);
-//        activityTransferFormBinding.spinnerasset.setBackground(customSpinnerBackground);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         activityTransferFormBinding.spinnerasset.setAdapter(adapter);
-
-
         activityTransferFormBinding.spinnerasset.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedValue = (String) parentView.getItemAtPosition(position);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
     }
-//    private void getAssetinfo() {
-//        try {
-//
-//            if (UtilityMethods.isConnectingToInternet(context)) {
-//                showMsgView(View.GONE,View.GONE);
-//                String params = Hocode;
-//                SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
-//                String token = tok.getString("token", "");
-//                Call<AssetinforesponseModel> call = apiInterface.assetinfo(params,"Bearer " + token);
-//                call.enqueue(new Callback<AssetinforesponseModel>() {
-//                    @Override
-//                    public void onResponse(@NonNull Call<AssetinforesponseModel> call, @NonNull retrofit2.Response<AssetinforesponseModel> response) {
-//                        AssetinforesponseModel responseType = response.body();
-//
-//                        if (responseType != null) {
-//
-//                            activityTransferFormBinding.sscat.setText(responseType.data.sscat);
-//                            activityTransferFormBinding.serial.setText(responseType.data.serialNumber);
-//                            activityTransferFormBinding.owner.setText(responseType.data.aOwner);
-//                            activityTransferFormBinding.detail.setText(responseType.data.details);
-//                            bcode = responseType.data.bcode;
-//
-//                        } else {
-//                            showMsgView(View.GONE,View.VISIBLE);
-//                        }
-//                    }
-//                    @Override
-//                    public void onFailure(@NonNull Call<AssetinforesponseModel> call, @NonNull Throwable t) {
-//                        showMsgView(View.GONE,View.VISIBLE);
-//                    }
-//                });
-//            } else {
-//                showMsgView(View.VISIBLE,View.GONE);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+
     void showMsgView(int containerVisibility,int srvr) {
         try {
             activityTransferFormBinding.llinternet.setVisibility(containerVisibility);
@@ -198,31 +155,4 @@ public class TransferFormActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    public void spinner(){
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//                this,
-//                R.array.status,
-//                simple_spinner_item
-//        );
-//        Drawable customSpinnerBackground = getResources().getDrawable(R.drawable.textview_resource_file);
-//        activityTransferFormBinding.spinner3.setBackground(customSpinnerBackground);
-//
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        activityTransferFormBinding.spinner3.setAdapter(adapter);
-//
-//
-//        activityTransferFormBinding.spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                selectedValue = (String) parentView.getItemAtPosition(position);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parentView) {
-//            }
-//        });
-//
-//
-//    }
 }

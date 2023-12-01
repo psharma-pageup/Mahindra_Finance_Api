@@ -53,10 +53,8 @@ public class CompletedAssetList extends Fragment {
     int pageIndex = 1;
     int pageSize = 10;
     String selectedValue=null;
-
     int Status;
     AssetListAdaptor adapter;
-
     boolean chk = false;
     private boolean isLastPage = false;
     private boolean isLoading = false;
@@ -89,7 +87,6 @@ public class CompletedAssetList extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -109,7 +106,6 @@ public class CompletedAssetList extends Fragment {
         fragmentCompletedAssetListBinding.rvAssetList.setHasFixedSize(true);
         fragmentCompletedAssetListBinding.rvAssetList.setLayoutManager(new LinearLayoutManager(getContext()));
         fragmentCompletedAssetListBinding.rvAssetList.setAdapter(adapter);
-
         fragmentCompletedAssetListBinding.rvAssetList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -125,42 +121,27 @@ public class CompletedAssetList extends Fragment {
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= pageSize) {
                         fragmentCompletedAssetListBinding.progressBar.setVisibility(View.VISIBLE);
-
                         pageIndex++;
                         getAssetList(pageIndex, pageSize);
                     }
                 }
-
             }
         });
-
-
     }
-
-
     private void init() {
         apiInterface = ApiClient.getClient(getContext()).create(ApiInterface.class);
         selectedValue = "All";
         getAssetList(pageIndex, pageSize);
-
     }
     private void spinner() {
 
-//        List<CharSequence> spinnerItems = Arrays.asList(getResources().getTextArray(R.array.snanned));
-//        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(getContext(), simple_spinner_item, spinnerItems);
-//
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        fragmentCompletedAssetListBinding.spinner3.setAdapter(adapter);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.snanned,
                 simple_spinner_item
         );
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         fragmentCompletedAssetListBinding.spinner3.setAdapter(adapter);
-
         fragmentCompletedAssetListBinding.spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -171,7 +152,6 @@ public class CompletedAssetList extends Fragment {
                 }
                 if(selectedValue.equals("Manual")){
                   Status=2;
-
                 } else if (selectedValue.equals("All")) {
                   Status = 4;
                 } else{
@@ -181,23 +161,14 @@ public class CompletedAssetList extends Fragment {
                 getAssetList(pageIndex, pageSize);
                 chk=false;
             }
-
-
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-
             }
         });
-
     }
-
     private void getAssetList(int pageIndex, int pageSize) {
-
         try {
-
             isLoading=true;
-
             if (UtilityMethods.isConnectingToInternet(getContext())) {
                 if(pageIndex == 1) {
                     showMsgView(View.GONE, View.GONE);
@@ -218,15 +189,12 @@ public class CompletedAssetList extends Fragment {
                     public void onResponse(@NonNull Call<AssetObjectResponseModel> call, @NonNull retrofit2.Response<AssetObjectResponseModel> response) {
                         AssetObjectResponseModel responseType = response.body();
                         showMsgView(View.GONE,View.GONE);
-
                         if (responseType != null) {
-
                             assetList.addAll(responseType.data.assetlist);
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     adapter.notifyDataSetChanged();
-
                                 }
                             });
                             fragmentCompletedAssetListBinding.progressBar.setVisibility(View.GONE);
@@ -237,12 +205,9 @@ public class CompletedAssetList extends Fragment {
                             showMsgView(View.GONE,View.VISIBLE);
                         }
                     }
-
-
                     @Override
                     public void onFailure(@NonNull Call<AssetObjectResponseModel> call, @NonNull Throwable t) {
                         showMsgView(View.GONE,View.VISIBLE);
-
                     }
                 });
             } else {
@@ -252,9 +217,6 @@ public class CompletedAssetList extends Fragment {
             e.printStackTrace();
         }
     }
-
-
-
     void showMsgView(int containerVisibility, int srvr) {
         try {
             fragmentCompletedAssetListBinding.llinternet.setVisibility(containerVisibility);

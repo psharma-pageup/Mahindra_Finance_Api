@@ -28,15 +28,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class BranchListActivity extends AppCompatActivity {
-
     private ActivityBranchListBinding activityBranchListBinding;
     ArrayList<BranchModel> branchList = new ArrayList<>();
     Context context;
    ApiInterface apiInterface;
    Serializable company;
    Serializable department;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +45,6 @@ public class BranchListActivity extends AppCompatActivity {
         init();
         clickListener();
     }
-
     private void clickListener() {
         activityBranchListBinding.btntransfer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +54,6 @@ public class BranchListActivity extends AppCompatActivity {
             }
         });
     }
-
     /** initialize the api interface and calls setToolbar() and getBranchList() functions */
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
@@ -69,41 +64,32 @@ public class BranchListActivity extends AppCompatActivity {
         getBranchList();
         activityBranchListBinding.btnRetry.setOnClickListener(v -> getBranchList());
     }
-
     /** set up toolbar*/
     private void setToolbar() {
         setSupportActionBar(activityBranchListBinding.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         activityBranchListBinding.toolbar.setNavigationIcon(R.drawable.back_button);
-
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
     /**
      * sapcode and bearer token is passed as parameters to receive branchlist as response
      */
 
     private void getBranchList() {
         try {
-
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE,View.VISIBLE,View.GONE);
-
                 SharedPreferences sh = getSharedPreferences("SAPCODE", MODE_PRIVATE);
                 String s1 = sh.getString("empCode", "");
-
                 SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = tok.getString("token", "");
-
-
                 Call<BranchResponseModel> call = apiInterface.branchdetails(s1,"Bearer " + token);
                 call.enqueue(new Callback<BranchResponseModel>() {
                     @Override
@@ -129,7 +115,6 @@ public class BranchListActivity extends AppCompatActivity {
                             showMsgView(View.GONE,View.GONE,View.VISIBLE);
                         }
                     }
-
                     @Override
                     public void onFailure(@NonNull Call<BranchResponseModel> call, @NonNull Throwable t) {
                         showMsgView(View.GONE,View.GONE,View.VISIBLE);
@@ -139,7 +124,6 @@ public class BranchListActivity extends AppCompatActivity {
                 showMsgView(View.VISIBLE,View.GONE,View.GONE);
             }
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
@@ -152,6 +136,4 @@ public class BranchListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
 }

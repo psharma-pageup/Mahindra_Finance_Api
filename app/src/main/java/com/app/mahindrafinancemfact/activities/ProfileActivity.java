@@ -30,7 +30,6 @@ public class ProfileActivity extends AppCompatActivity {
     Context context;
     String imei1;
     String imei2;
-
     String company;
     String department;
 
@@ -40,13 +39,11 @@ public class ProfileActivity extends AppCompatActivity {
         activityWelcomeBinding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(activityWelcomeBinding.getRoot());
         context = this;
-
         init();
         setToolbar();
         getImei();
         getProfile();
         clickListener();
-
     }
     /**
      * initialize apiinterface
@@ -62,22 +59,17 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(activityWelcomeBinding.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         activityWelcomeBinding.toolbar.setNavigationIcon(R.drawable.back_button);
-
-
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-
             onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
     public void clickListener(){
         activityWelcomeBinding.nxtbtn.setOnClickListener(v -> {
-
                 Intent intent = new Intent(ProfileActivity.this, BranchListActivity.class);
                 intent.putExtra("company",company);
                 intent.putExtra("department",department);
@@ -93,21 +85,15 @@ public class ProfileActivity extends AppCompatActivity {
             builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());
             builder.show();
         });
-
     }
-
     private void logoutapicall() {
         try
         {
             if (UtilityMethods.isConnectingToInternet(context)) {
-
                 showMsgView(View.GONE,View.GONE);
                 String logoutimei = imei1;
-
                 SharedPreferences sh = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = sh.getString("token", "");
-
-
                 Call<ProfileObjectModel> call = apiInterface.logout(logoutimei,"Bearer " + token);
                 call.enqueue(new Callback<ProfileObjectModel>(){
                     @Override
@@ -120,13 +106,10 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
             } else {
-
                 showMsgView(View.VISIBLE,View.GONE);
             }
         } catch (Exception e) {
-
             Toast.makeText(ProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
         }
         finish();
     }
@@ -152,25 +135,18 @@ public class ProfileActivity extends AppCompatActivity {
         try
         {
             if (UtilityMethods.isConnectingToInternet(context)) {
-
                 showMsgView(View.GONE,View.GONE);
-
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imeI1", imei1);
                 params.put("imeI2", imei2);
-
                 SharedPreferences sh = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = sh.getString("token", "");
-
-
                 Call<ProfileObjectModel> call = apiInterface.getProfile(params,"Bearer " + token);
                 call.enqueue(new Callback<ProfileObjectModel>(){
                     @Override
                     public void onResponse(@NonNull Call<ProfileObjectModel> call, @NonNull retrofit2.Response<ProfileObjectModel>response) {
                         ProfileObjectModel profileObjectModel = response.body();
-
                         if (profileObjectModel != null) {
-
                                     company= profileObjectModel.data.company;
                                     department=profileObjectModel.data.dept;
                                     activityWelcomeBinding.username.setText(profileObjectModel.data.name);
@@ -184,7 +160,6 @@ public class ProfileActivity extends AppCompatActivity {
                                     SharedPreferences.Editor myEdit = sharedPreferences.edit();
                                     myEdit.putString("empCode", empCode);
                                     myEdit.apply();
-
                         } else {
                             showMsgView(View.GONE,View.VISIBLE);
                         }
@@ -195,20 +170,16 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 });
             } else {
-
                 showMsgView(View.VISIBLE,View.GONE);
             }
         } catch (Exception e) {
-
             Toast.makeText(ProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
         }
     }
     void showMsgView(int containerVisibility,int srvr) {
         try {
             activityWelcomeBinding.llinternet.setVisibility(containerVisibility);
             activityWelcomeBinding.servererror.setVisibility(srvr);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -25,7 +25,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class MessageActivity extends AppCompatActivity {
-
     private ActivityMessageBinding activityMessageBinding;
     Serializable imeiResponse;
     ApiInterface apiInterface;
@@ -40,9 +39,7 @@ public class MessageActivity extends AppCompatActivity {
         init();
         imeiResponse = getIntent().getSerializableExtra("imeiresponse");
         setMessage();
-
     }
-
     /**
      * initialize apiinterface
      * */
@@ -50,14 +47,10 @@ public class MessageActivity extends AppCompatActivity {
         try {
             context = this;
             apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     /**
      * According to the response received through intent from splash screen activity relevant messages are shown
      * */
@@ -102,18 +95,15 @@ public class MessageActivity extends AppCompatActivity {
         if(manager.getPhoneCount() == 1){
             imei1 = imei;
             sendImei();
-
         } else if (manager.getPhoneCount() == 2) {
             imei1 = imei;
             imei2 = imei;
             sendImei();
-
         }
     }
     public void sendImei(){
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
-
                 HashMap<String, String> params = new HashMap<>();
                 params.put("imeI1", imei1);
                 params.put("imeI2", imei2);
@@ -125,8 +115,6 @@ public class MessageActivity extends AppCompatActivity {
                     public void onResponse(Call<ImeiModel> call, retrofit2.Response<ImeiModel> response) {
                         ImeiModel imeiresponse = response.body();
                         if (imeiresponse != null) {
-
-
                             if(imeiresponse.data.data == 1){
                                 Toast.makeText(MessageActivity.this, R.string.registration_successful, Toast.LENGTH_SHORT).show();
                                 finishAffinity();
@@ -146,31 +134,22 @@ public class MessageActivity extends AppCompatActivity {
                                         })
                                         .show();
                             }
-
-
                         } else
                         {
                             Toast.makeText(MessageActivity.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
                         }
                     }
-
                     @Override
                     public void onFailure(Call<ImeiModel> call, Throwable t) {
-
                         Toast.makeText(MessageActivity.this,  getResources().getString(R.string.server_error_msg), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
                 Toast.makeText(MessageActivity.this,  getResources().getString(R.string.no_net_msg), Toast.LENGTH_SHORT).show();
-
             }
         }
         catch (Exception e) {
             Toast.makeText(MessageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-
         }
     }
-
-
-
 }

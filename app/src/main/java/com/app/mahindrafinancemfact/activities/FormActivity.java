@@ -57,7 +57,6 @@ public class FormActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     String selectedValue;
     List<CharSequence> drop = new ArrayList<>();
-
     String selectedValue2;
     String selectedValue3;
     private ActivityFormBinding activityFormBinding;
@@ -70,8 +69,6 @@ public class FormActivity extends AppCompatActivity {
     LayerDrawable destbg;
     Drawable destbgdraw;
     Drawable bodyDrawable;
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +99,6 @@ public class FormActivity extends AppCompatActivity {
         } else {
             Toast.makeText(context, "No Delimiter", Toast.LENGTH_SHORT).show();
         }
-
         remark = activityFormBinding.remark.getText().toString();
         receipt = activityFormBinding.receipt.getText().toString();
         if(selectedValue2.equals("Sold"))
@@ -123,17 +119,13 @@ public class FormActivity extends AppCompatActivity {
             concat = remark;
             branchcode = extracted;
         }
-
-
         try {
             SharedPreferences sh = getSharedPreferences("SAPCODE", MODE_PRIVATE);
             sapcode = sh.getString("empCode", "");
             SharedPreferences ai = getSharedPreferences("AID",MODE_PRIVATE);
             aid = ai.getString("aid","");
-
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE,View.GONE);
-
                 HashMap<String, String> params = new HashMap<>();
                 params.put("sapcode", sapcode);
                 params.put("aid", aid);
@@ -168,7 +160,6 @@ public class FormActivity extends AppCompatActivity {
         startActivity(intent);
         finishAndRemoveTask();
     }
-
     public void init(){
         apiInterface = ApiClient.getClient(context).create(ApiInterface.class);
         setToolbar();
@@ -190,7 +181,6 @@ public class FormActivity extends AppCompatActivity {
     }
     private void getAssetinfo() {
         try {
-
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE,View.GONE);
                 String params = Hocode;
@@ -201,15 +191,12 @@ public class FormActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<AssetinforesponseModel> call, @NonNull retrofit2.Response<AssetinforesponseModel> response) {
                         AssetinforesponseModel responseType = response.body();
-
                         if (responseType != null) {
-
                             activityFormBinding.sscat.setText(responseType.data.sscat);
                             activityFormBinding.serial.setText(responseType.data.serialNumber);
                             activityFormBinding.owner.setText(responseType.data.aOwner);
                             activityFormBinding.detail.setText(responseType.data.details);
                             bcode = responseType.data.bcode;
-
                         } else {
                             showMsgView(View.GONE,View.VISIBLE);
                         }
@@ -245,17 +232,14 @@ public class FormActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
     private void spinner2() {
         int entries;
         boolean conditionMet;
-
         if(selectedValue.equals("Available")){
             conditionMet = true;
         }else{
             conditionMet = false;
         }
-
         if (conditionMet) {
              entries = R.array.available;
         } else {
@@ -266,17 +250,9 @@ public class FormActivity extends AppCompatActivity {
                 entries,
                 simple_spinner_item
         );
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinnerDropdown2.setAdapter(adapter);
-//        List<CharSequence> spinnerItems = Arrays.asList(getResources().getTextArray(entries));
-//        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context, R.layout.custom_form_layout_item, spinnerItems);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinnerDropdown2.setAdapter(adapter);
-
         spinnerDropdown2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedValue2 = (String) parentView.getItemAtPosition(position);
@@ -293,8 +269,6 @@ public class FormActivity extends AppCompatActivity {
                     destbgdraw.setColorFilter(ContextCompat.getColor(FormActivity.this,R.color.diabled),PorterDuff.Mode.SRC_IN);
                     activityFormBinding.spinner3.setBackground(destbg);
                     activityFormBinding.spinner3.setEnabled(false);
-
-
                 } else if (selectedValue2.equals("Transfer")) {
                     activityFormBinding.receipt.setEnabled(false);
                     activityFormBinding.tvreceipt.setText("---");
@@ -305,7 +279,6 @@ public class FormActivity extends AppCompatActivity {
                     bodyDrawable.setColorFilter(ContextCompat.getColor(FormActivity.this, R.color.diabled), PorterDuff.Mode.SRC_IN);
                     activityFormBinding.receipt.setBackground(backgroundDrawable);
                     activityFormBinding.spinner3.setEnabled(true);
-
                     spinner3();
                 } else {
                     activityFormBinding.receipt.setEnabled(false);
@@ -320,26 +293,20 @@ public class FormActivity extends AppCompatActivity {
                     destbgdraw.setColorFilter(ContextCompat.getColor(FormActivity.this,R.color.diabled),PorterDuff.Mode.SRC_IN);
                     activityFormBinding.spinner3.setBackground(destbg);
                     activityFormBinding.spinner3.setEnabled(false);
-
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
     }
-
     private void spinner3() {
-
         activityFormBinding.dest.setText(R.string.destination);
         destbgdraw.setColorFilter(ContextCompat.getColor(FormActivity.this,R.color.white),PorterDuff.Mode.SRC_IN);
         activityFormBinding.spinner3.setBackground(destbg);
-
         SharedPreferences ai = getSharedPreferences("AID",MODE_PRIVATE);
         aid = ai.getString("aid","");
         try {
-
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.GONE,View.GONE);
                 String params = aid;
@@ -350,29 +317,19 @@ public class FormActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<AssetBranchListResponseModel> call, @NonNull retrofit2.Response<AssetBranchListResponseModel> response) {
                         AssetBranchListResponseModel responseType = response.body();
-
                         if (responseType != null) {
-
                             for(int i = 0; i< responseType.assetbranch.size();i++) {
                                 entries = responseType.assetbranch;
                                 drop.addAll(Collections.singleton(entries.get(i).branch));
                             }
                             ArrayAdapter adapter = new ArrayAdapter(context, simple_spinner_item, drop);
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
                             spinnerDropdown3.setAdapter(adapter);
-//                            List<CharSequence> spinnerItems = drop;
-//                            CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context, R.layout.custom_form_layout_item, spinnerItems);
-//                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                            spinnerDropdown3.setAdapter(adapter);
-
                             spinnerDropdown3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                     selectedValue3 = (String) parentView.getItemAtPosition(position);
-
                                 }
-
                                 @Override
                                 public void onNothingSelected(AdapterView<?> parentView) {
                                 }
@@ -392,42 +349,18 @@ public class FormActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
     public void spinner(){
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//                this,
-//                R.array.status,
-//                simple_spinner_item
-//        );
-//        Drawable customSpinnerBackground = getResources().getDrawable(R.drawable.textview_resource_file);
-//        spinnerDropdown.setBackground(customSpinnerBackground);
-//
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//        spinnerDropdown.setAdapter(adapter);
-//        Drawable customSpinnerBackground = getResources().getDrawable(R.drawable.textview_resource_file);
-//
-//        List<CharSequence> spinnerItems = Arrays.asList(getResources().getTextArray(R.array.status));
-//        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(context, R.layout.custom_form_layout_item, spinnerItems);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinnerDropdown.setBackground(customSpinnerBackground);
-//        spinnerDropdown.setAdapter(adapter);
-
         spinnerDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedValue = (String) parentView.getItemAtPosition(position);
                 spinner2();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
-
-
     }
     void showMsgView(int containerVisibility,int srvr) {
         try {
@@ -443,6 +376,5 @@ public class FormActivity extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(FormActivity.this, AssetListScreenActivity.class));
         finish();
-
     }
 }

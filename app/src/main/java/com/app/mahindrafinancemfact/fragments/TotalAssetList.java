@@ -99,7 +99,6 @@ public class TotalAssetList extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
@@ -120,7 +119,6 @@ public class TotalAssetList extends Fragment {
     private void init() {
         apiInterface = ApiClient.getClient(getContext()).create(ApiInterface.class);
         getAssetList(pageIndex,pageSize);
-
     }
     private void getAssetList(int pageIn, int pageSize) {
         try {

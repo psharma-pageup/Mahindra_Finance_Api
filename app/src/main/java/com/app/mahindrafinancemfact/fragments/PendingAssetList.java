@@ -44,12 +44,9 @@ public class PendingAssetList extends Fragment {
     PendingListAdapter adapter;
     private boolean isLastPage = false;
     private boolean isLoading = false;
-
-
     public PendingAssetList() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -67,7 +64,6 @@ public class PendingAssetList extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,42 +72,31 @@ public class PendingAssetList extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentPendingAssetListBinding = FragmentPendingAssetListBinding.inflate(inflater,container,false);
-
-
         setupRecyclerView();
         SharedPreferences sh = getContext().getSharedPreferences("SAPCODE", MODE_PRIVATE);
         s1 = sh.getString("empCode", "");
         SharedPreferences ai = getContext().getSharedPreferences("AID",MODE_PRIVATE);
         s2 = ai.getString("aid","");
         init();
-
         return fragmentPendingAssetListBinding.getRoot();
     }
-
-
-
     private void setupRecyclerView() {
         adapter = new PendingListAdapter(getContext(), assetList);
         fragmentPendingAssetListBinding.rvAssetList.setHasFixedSize(true);
         fragmentPendingAssetListBinding.rvAssetList.setLayoutManager(new LinearLayoutManager(getContext()));
         fragmentPendingAssetListBinding.rvAssetList.setAdapter(adapter);
-
         fragmentPendingAssetListBinding.rvAssetList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int visibleItemCount = layoutManager.getChildCount();
                 int totalItemCount = layoutManager.getItemCount();
                 int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
                 if (!isLoading && !isLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
@@ -124,16 +109,12 @@ public class PendingAssetList extends Fragment {
             }
         });
     }
-
     private void init() {
         apiInterface = ApiClient.getClient(getContext()).create(ApiInterface.class);
         getAssetList(pageIndex,pageSize);
-
     }
-
     private void getAssetList(int pageIndex, int pageSize) {
         try {
-
             if (UtilityMethods.isConnectingToInternet(getContext())) {
                  showMsgView(View.GONE,View.GONE);
                 HashMap<String, String> params = new HashMap<>();
@@ -150,7 +131,6 @@ public class PendingAssetList extends Fragment {
                     public void onResponse(@NonNull Call<AssetObjectResponseModel> call, @NonNull retrofit2.Response<AssetObjectResponseModel> response) {
                         AssetObjectResponseModel responseType = response.body();
                           showMsgView(View.GONE,View.GONE);
-
                         if (responseType != null) {
                             assetList.addAll(responseType.data.assetlist);
                             adapter.notifyDataSetChanged();

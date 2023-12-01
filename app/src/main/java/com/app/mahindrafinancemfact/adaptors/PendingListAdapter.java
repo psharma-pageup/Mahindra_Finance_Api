@@ -39,45 +39,34 @@ public class PendingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == VIEW_TYPE_ITEM) {
-
             com.app.mahindrafinancemfact.databinding.PendinglistitemBinding branchListItemBinding = PendinglistitemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
-
             return new assetViewHolder(branchListItemBinding);
         }else{
             ItemLoadingBinding itemLoadingBinding = ItemLoadingBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
             return new loadingViewHolder(itemLoadingBinding);
         }
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof PendingListAdapter.assetViewHolder) {
-
             populateItemRows((PendingListAdapter.assetViewHolder) holder, position);
         } else if (holder instanceof PendingListAdapter.loadingViewHolder) {
             showLoadingView((PendingListAdapter.loadingViewHolder) holder, position);
         }
-
     }
-
     private void showLoadingView(loadingViewHolder holder, int position) {
     }
-
     private void populateItemRows(PendingListAdapter.assetViewHolder holder, int position) {
         TextView tvbranchName = holder.itemView.findViewById(R.id.tvBranchName);
         String item = assetList.get(position).toString();
-
         tvbranchName.setText(item);
-
         SharedPreferences sharedPreferences = context.getSharedPreferences("Status", MODE_PRIVATE);
         String status = sharedPreferences.getString("stat", "");
-
        tvbranchName.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                String Hocode = assetList.get(position).toString();
                String[] parts = Hocode.split(" - ");
-
                String extracted = null;
                if (parts.length >= 1) {
                    extracted = parts[0];
@@ -91,7 +80,6 @@ public class PendingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
            }
        });
     }
-
     @Override
     public int getItemCount() {
         return assetList.size ();
@@ -103,19 +91,14 @@ public class PendingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public static class assetViewHolder extends RecyclerView.ViewHolder {
         private final PendinglistitemBinding branchListItemBinding;
         TextView tvbranchName;
-
         public assetViewHolder(@NonNull PendinglistitemBinding branchListItemBinding) {
             super(branchListItemBinding.getRoot());
             this.branchListItemBinding = branchListItemBinding;
             tvbranchName = branchListItemBinding.tvBranchName;
-
         }
-
     }
     private class loadingViewHolder extends RecyclerView.ViewHolder {
-
         private final ItemLoadingBinding itemLoadingBinding;
-
         public loadingViewHolder(@NonNull ItemLoadingBinding itemLoadingBinding) {
             super(itemLoadingBinding.getRoot());
             this.itemLoadingBinding = itemLoadingBinding;

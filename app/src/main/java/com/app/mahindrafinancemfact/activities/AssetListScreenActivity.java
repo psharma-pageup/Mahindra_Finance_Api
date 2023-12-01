@@ -26,7 +26,6 @@ import retrofit2.Callback;
 
 public class AssetListScreenActivity extends AppCompatActivity {
     private ActivityAssetListScreenBinding activityAssetListScreenBinding;
-
     ApiInterface apiInterface;
     Context context;
     String s1;
@@ -106,7 +105,6 @@ public class AssetListScreenActivity extends AppCompatActivity {
         try {
 
             if (UtilityMethods.isConnectingToInternet(context)) {
-              //  showMsgView(View.VISIBLE);
                 HashMap<String, String> params = new HashMap<>();
                 params.put("empCode", s1);
                 params.put("aid", s2);
@@ -119,7 +117,6 @@ public class AssetListScreenActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(@NonNull Call<AssetObjectResponseModel> call, @NonNull retrofit2.Response<AssetObjectResponseModel> response) {
                         AssetObjectResponseModel responseType = response.body();
-                    //    showMsgView(View.GONE);
 
                         if (responseType != null) {
                             total=String.valueOf(responseType.data.total);
@@ -130,28 +127,19 @@ public class AssetListScreenActivity extends AppCompatActivity {
                             activityAssetListScreenBinding.tabLayout.getTabAt(2).setText("Total" + "(" + total + ")" );
 
                         } else {
-                        //    showMsgView(View.GONE);
                         }
                     }
                     @Override
                     public void onFailure(@NonNull Call<AssetObjectResponseModel> call, @NonNull Throwable t) {
-                     //   showMsgView(View.GONE);
                     }
                 });
             } else {
-               // showMsgView(View.GONE);
 
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-//    void showMsgView(int loadingVisibility) {
-//        try {
-//          activityAssetListScreenBinding.load.setVisibility(loadingVisibility);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
 }

@@ -66,6 +66,8 @@ public class SplashScreen extends AppCompatActivity {
     String imei2;
     String qrResponse;
     private boolean isClickable = true;
+    boolean btnpressstarted = false;
+    boolean btnpressqr = false;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -101,7 +103,6 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivitySplashScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -131,6 +132,7 @@ public class SplashScreen extends AppCompatActivity {
     public void setView() {
         binding.btnGettingStarted.setOnClickListener(this::onClick);
         binding.btnQrDetails.setOnClickListener(this::onClick);
+        binding.btnRetry.setOnClickListener(this::onClick);
         checkPermission();
     }
     public void onClick(View v) {
@@ -138,23 +140,31 @@ public class SplashScreen extends AppCompatActivity {
         long CLICK_DELAY = 1000;
         if (id == R.id.btnGettingStarted) {
             if (isClickable) {
+                btnpressstarted = true;
+                btnpressqr = false;
                 getImei();
                 sendImei();
                 isClickable = false;
-
                 Handler handler = new Handler();
                 handler.postDelayed(() -> isClickable = true, CLICK_DELAY);
             }
 
         } else if (id == R.id.btnQrDetails) {
             if (isClickable) {
+                btnpressstarted = false;
+                btnpressqr = true;
                 scanCode();
                 isClickable = false;
-
                 Handler handler = new Handler();
                 handler.postDelayed(() -> isClickable = true, CLICK_DELAY);
             }
 
+        } else if (id == R.id.btnRetry) {
+            if(btnpressstarted){
+                serviceCall();
+            } else if (btnpressqr) {
+                qrservicecall();
+            }
         }
     }
 
@@ -171,7 +181,6 @@ public class SplashScreen extends AppCompatActivity {
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
         if(result.getContents() != null)
         {
-
             qrResponse = result.getContents();
             if(qrResponse.length() == 30){
                 qrservicecall();
@@ -187,7 +196,6 @@ public class SplashScreen extends AppCompatActivity {
     private void qrservicecall() {
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
-
                 showMsgView(View.VISIBLE,View.GONE,View.GONE);
                 SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = tok.getString("token", "");
@@ -209,31 +217,25 @@ public class SplashScreen extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(@NonNull Call<QRResponseModel> call, @NonNull Throwable t) {
-
                         showMsgView(View.GONE,View.GONE,View.VISIBLE);
                     }
                 });
             } else {
                 showMsgView(View.GONE,View.VISIBLE,View.GONE);
-
             }
         }
         catch (Exception e) {
             Toast.makeText(SplashScreen.this, e.getMessage(), LENGTH_SHORT).show();
-
         }
-
     }
  @SuppressLint("HardwareIds")
  public void getImei(){
         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if(manager.getPhoneCount() == 1){
-
            imei1 =  Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
         } else if (manager.getPhoneCount() == 2) {
-
             imei1 =  Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.ANDROID_ID);
@@ -263,9 +265,7 @@ public class SplashScreen extends AppCompatActivity {
                     public void onResponse(@NonNull Call<ImeiModel> call, @NonNull retrofit2.Response<ImeiModel> response) {
                         ImeiModel imeiresponse = response.body();
                         binding.pbLoading.setVisibility(View.GONE);
-
                         if (imeiresponse != null) {
-
                             if((imeiresponse.data.data == 0) || (imeiresponse.data.data == 4) || (imeiresponse.data.data == 5)){
                                 Intent intent = new Intent(SplashScreen.this,MessageActivity.class);
                                 intent.putExtra("imeiresponse",imeiresponse.data.data);
@@ -289,7 +289,6 @@ public class SplashScreen extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(@NonNull Call<ImeiModel> call, @NonNull Throwable t) {
-
                         showMsgView(View.VISIBLE,View.GONE,View.VISIBLE);
                     }
                 });
@@ -303,7 +302,6 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 private void checkPermission() {
-
     permissionStatus = getSharedPreferences("permissionStatus", MODE_PRIVATE);
     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -341,7 +339,6 @@ private void checkPermission() {
             builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
             builder.show();
         } else {
-            //just request the permission
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
                     , Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_PHONE_STATE}, PERMISSION_CALLBACK_CONSTANT);
         }
@@ -377,20 +374,16 @@ private void checkPermission() {
         }
     }
     private void hide() {
-        // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
         mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
     private void show() {
-        // Show the system bar
         if (Build.VERSION.SDK_INT >= 30) {
             mContentView.getWindowInsetsController().show(
                     WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
@@ -399,8 +392,6 @@ private void checkPermission() {
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         }
         mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
         mHideHandler.removeCallbacks(mHidePart2Runnable);
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
     }
@@ -413,13 +404,11 @@ private void checkPermission() {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, 100);
     }
-
     void showMsgView(int containerVisibility, int nointernetvisibillity, int srvrerr) {
         try {
             binding.llinternet.setVisibility(nointernetvisibillity);
             binding.net.setVisibility(containerVisibility);
             binding.servererror.setVisibility(srvrerr);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

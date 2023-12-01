@@ -15,21 +15,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     public static String BASE_URL = "https://bams-mahindra.azurewebsites.net/";
-
-
     private static Retrofit retrofit = null;
-
     public static Retrofit getClient(Context context) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .readTimeout(60, TimeUnit.SECONDS)
                 .connectTimeout(60, TimeUnit.SECONDS);
-
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(interceptor);
         }
-
         OkHttpClient client = clientBuilder.build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -38,8 +33,5 @@ public class ApiClient {
                 .build();
         Log.e("restrofit ",retrofit.toString());
         return retrofit;
-
-
     }
-
 }

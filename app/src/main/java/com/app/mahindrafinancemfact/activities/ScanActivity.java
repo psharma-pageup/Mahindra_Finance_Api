@@ -81,7 +81,6 @@ public class ScanActivity extends CaptureActivity {
 /**
  * tackles with the result we get after scanning barcode as well as getting the image of barcode that we scanned and conversion of that image to base 64
  * */
-
     private final BarcodeCallback callback = new BarcodeCallback() {
         @Override
         public void barcodeResult(BarcodeResult result) {
@@ -101,9 +100,6 @@ public class ScanActivity extends CaptureActivity {
                 image.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
                 byteArray = byteArrayOutputStream.toByteArray();
                 quality -= 10;
-
-
-
             }
             base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
             byte[] b64 = Base64.decode(base64Image,Base64.DEFAULT);
@@ -116,50 +112,35 @@ public class ScanActivity extends CaptureActivity {
             int sizeInKB = b64.length / 1024;
             trial();
         }
-
-
-
-
-
         @Override
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
-
     };
 
-    //
+
     private static void saveBitmapToFile(Context context, Bitmap bitmap) throws IOException {
         try {
-
             File imageFile = createTempImageFile(context);
-
             try (FileOutputStream outputStream = new FileOutputStream(imageFile)) {
-                // Compress the bitmap to JPEG format
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             }
-
-            // Notify the media scanner about the new file
             android.media.MediaScannerConnection.scanFile(
                     context,
                     new String[]{imageFile.getAbsolutePath()},
                     null,
                     null);
         }catch(Exception ex)
-
         {
             ex.printStackTrace();
         }
-        // Optionally, you can delete the temporary file if you don't need it anymore
-        // imageFile.delete();
-    }
 
+    }
     private static File createTempImageFile(Context context) throws IOException {
         String timeStamp = String.valueOf(System.currentTimeMillis());
         String imageFileName = "IMG_" + timeStamp;
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
-    //
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +202,6 @@ public class ScanActivity extends CaptureActivity {
             requestPermissions();
         }
     }
-
     @SuppressLint("MissingPermission")
     private void requestNewLocationData() {
         LocationRequest mLocationRequest = new LocationRequest();
@@ -232,7 +212,6 @@ public class ScanActivity extends CaptureActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
-
     private LocationCallback mLocationCallback = new LocationCallback() {
 
         @Override
@@ -243,17 +222,14 @@ public class ScanActivity extends CaptureActivity {
             longitude = String.valueOf(mLastLocation.getLongitude());
         }
     };
-
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_GRANTED;
-
     }
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{
                 "android.permission.ACCESS_COARSE_LOCATION",
                 "android.permission.ACCESS_FINE_LOCATION"},REQUEST_LOCATION);
     }
-
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -262,14 +238,12 @@ public class ScanActivity extends CaptureActivity {
     public void
     onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == REQUEST_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getLastLocation();
             }
         }
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -278,11 +252,9 @@ public class ScanActivity extends CaptureActivity {
         }
         barcodeView.resume();
     }
-
     @Override
     protected void onPause() {
         super.onPause();
-
         barcodeView.pause();
     }
 /**
@@ -294,14 +266,12 @@ public class ScanActivity extends CaptureActivity {
  *     if user clicks on AssetList option then call QRSerciceCall() function
  * }
  * */
-
 public void trial(){
     if(lastText != null) {
 
         if (lastText.length() == 30) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle(R.string.choose_a_condition);
-
             String[] status = {getString(R.string.working_condition), getString(R.string.not_in_use), getString(R.string.scrap), getString(R.string.not_in_working_condition)};
             builder.setItems(status, (dialog, which) -> {
                 switch (which) {
@@ -322,30 +292,22 @@ public void trial(){
                         break;
                     }
                 }
-
                 serviceCall();
             });
             builder.setPositiveButton(R.string.assetlist, (dialog, which) -> qrservicecall());
             builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
                 dialog.cancel();
                 finish();
-
             });
-
-
             AlertDialog dialog = builder.create();
             dialog.show();
-
         } else {
-
             Toast.makeText(context, R.string.invalid_qr, LENGTH_SHORT).show();
-
         }
     }else{
         Toast.makeText(context, R.string.please_scan_qr_code_first,LENGTH_SHORT).show();
     }
 }
-
     /**
      * takes bearer token and the string retrived after scanning the qr as params and returns customer information as response
      * */
@@ -376,32 +338,25 @@ public void trial(){
                     @Override
                     public void onFailure(@NonNull Call<QRResponseModel> call, @NonNull Throwable t) {
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.VISIBLE);
-
                     }
                 });
             } else {
                 showMsgView(View.GONE,View.GONE,View.GONE,View.VISIBLE,View.GONE,View.GONE);
-
             }
         }
         catch (Exception e) {
             Toast.makeText(ScanActivity.this, e.getMessage(), LENGTH_SHORT).show();
-
         }
-
     }
-
     /**
      * takes sapcode,audit id,string received after scanning qr code, latitude,longitude,Atag and base 64 image as parameters and returns sucessful/unsuccessful as response
      * */
     private void serviceCall() {
-
         try {
             if (UtilityMethods.isConnectingToInternet(context)) {
                 showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.VISIBLE,View.GONE);
                 SharedPreferences sh = getSharedPreferences("SAPCODE", MODE_PRIVATE);
                 s1 = sh.getString("empCode", "");
-
                 SharedPreferences ai = getSharedPreferences("AID",MODE_PRIVATE);
                 s2 = ai.getString("aid","");
                 HashMap<String, String> params = new HashMap<>();
@@ -412,20 +367,15 @@ public void trial(){
                 params.put("Latitude",latitude);
                 params.put("Atag",Atag);
                 params.put("base64",base64Image);
-
-
                 SharedPreferences tok = getSharedPreferences("Token", MODE_PRIVATE);
                 String token = tok.getString("token", "");
-
                 Call<ImeiObjectModel> call = apiInterface.Final_request(params,"Bearer "+token);
                 call.enqueue(new Callback<ImeiObjectModel>() {
                     @Override
                     public void onResponse(@NonNull Call<ImeiObjectModel> call, @NonNull retrofit2.Response<ImeiObjectModel> response) {
                         ImeiObjectModel imeiresponse = response.body();
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.GONE);
-
                         if (imeiresponse != null) {
-
                             if(imeiresponse.data == 0 ){
                                 Toast.makeText(ScanActivity.this, R.string.unsuccessful, LENGTH_SHORT).show();
                                 finish();
@@ -440,9 +390,7 @@ public void trial(){
                     }
                     @Override
                     public void onFailure(@NonNull Call<ImeiObjectModel> call, @NonNull Throwable t) {
-
                         showMsgView(View.VISIBLE,View.VISIBLE,View.VISIBLE,View.GONE,View.GONE,View.VISIBLE);
-
                     }
                 });
             } else {
@@ -453,7 +401,6 @@ public void trial(){
             Toast.makeText(ScanActivity.this, e.getMessage(), LENGTH_SHORT).show();
         }
     }
-
     void showMsgView(int barcodeview, int btnlyt,int v, int net, int load, int srvrerr ) {
         try {
             barcodeView.setVisibility(barcodeview);

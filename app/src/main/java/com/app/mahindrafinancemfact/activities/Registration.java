@@ -77,7 +77,6 @@ public class Registration extends AppCompatActivity {
             if(isAllFieldsChecked){
                 serviceCall();
             }
-
         });
     }
 
@@ -110,7 +109,6 @@ public class Registration extends AppCompatActivity {
                         RegistrationModel registerresponse = response.body();
                         showMsgView(View.GONE, View.GONE,View.GONE);
                         if (registerresponse != null) {
-
                             if(registerresponse.data == 1){
                                 activityRegistrationBinding.inactive.setVisibility(View.GONE);
                                 SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
@@ -144,7 +142,6 @@ public class Registration extends AppCompatActivity {
 
         }
     }
-
     /**
      * loader
      * */
