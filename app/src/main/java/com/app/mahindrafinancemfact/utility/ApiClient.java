@@ -14,7 +14,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static String BASE_URL = "https://bams-mahindra.azurewebsites.net/";
+//    public static String BASE_URL = "https://bams-mahindra.azurewebsites.net/";
+    public static String BASE_URL = "https://mmfss-bams.mmfsl.com:9443/";
     private static Retrofit retrofit = null;
     public static Retrofit getClient(Context context) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
